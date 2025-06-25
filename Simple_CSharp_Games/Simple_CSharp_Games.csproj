@@ -19,10 +19,4 @@
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.14" PrivateAssets="all" />
 	</ItemGroup>
 
-	<!-- Ensure index.html and _redirects are copied correctly -->
-	<ItemGroup>
-		<Content Include="index.html" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-		<Content Include="wwwroot/_redirects" CopyToOutputDirectory="Always" CopyToPublishDirectory="Always" />
-	</ItemGroup>
-
 </Project>
