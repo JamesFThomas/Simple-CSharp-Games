@@ -1,0 +1,184 @@
+﻿@using Simple_CSharp_Games.Models;
+
+@if (!gameStarted)
+{
+    <button class="btn btn-primary" @onclick="StartGame">Play Tic Tac Toe</button>
+}
+else
+{
+    @if (boardSate == "open")
+    {
+    
+    <div class="text-center">
+        @if (!string.IsNullOrEmpty(guessFeedback))
+        {
+            <p class="alert alert-warning"> @guessFeedback</p>
+        }
+
+        <div class="d-flex flex-row" style="flex:1;">
+            <div class="m-2 p-3 d-flex flex-column align-items-center justify-content-around bg-primary text-white" style="flex: 1;">
+                    <h4>
+                        Player @playerTurn's turn
+                    </h4>
+                    <div class="input-wrapper">
+                        <input 
+                        type="number"
+                        class="m-2 p-1"
+                        min="1"
+                        max="9"
+                        @bind-value="currentGuess"
+                        @bind-value:event="oninput"
+                        @onkeydown="HandleKeyDown" />
+
+                        <button class="btn btn-primary" @onclick="MarkSpace" >  Mark space </button>
+                    </div>
+                    <div class="example-wrapper d-flex align-items-center">
+                        <p class="p-2 text-justify" style="flex: 1;">
+                            Choose an open game board square square based on the grid numbers shown. 
+                        </p>
+                        <div class="example-board d-flex flex-wrap justify-content-center" style="flex: 1;">
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">7</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">8</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">9</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">4</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">5</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">6</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">1</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">2</div>
+                            <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">3</div>
+                        </div>
+                    </div>
+                    
+            </div>
+            <div class="m-2 p-3 d-flex flex-column align-items-center bg-success text-white" style="flex: 1;">
+                <h4>Game Board</h4>
+                <div class="text-center">
+                    <div class="game-board d-flex flex-wrap justify-content-center" style="width: 300px; height: 300px;">
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.seven</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.eight</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.nine</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.four</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.five </div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.six</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.one</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.two</div>
+                        <div class="cell border d-flex align-items-center justify-content-center" style="width: 33.33%; height: 33.33%; font-size: 2rem;">@boardValues.three</div>
+                    </div>
+                </div>    
+            </div> 
+        </div>
+    </div>
+    }
+    @if (boardSate == "draw")
+    {
+        <div class="d-flex flex-column align-items-center justify-content-center">
+            <p class="p-2 text-justify display-4">
+                @boardSate.ToUpper()!
+            </p>
+
+            <button class="btn btn-primary" @onclick="StartGame">Play Again</button>
+        </div>
+
+
+    }
+    @if (boardSate == "won")
+    {
+        <div class="d-flex flex-column align-items-center justify-content-center">
+
+            <p class="p-2 text-justify display-4">
+                Player @playerTurn @boardSate.ToUpper()
+            </p>
+
+            <button class="btn btn-primary" @onclick="StartGame">Play Again</button>
+        </div>
+
+    }
+}
+
+@code {
+
+    private bool gameStarted = false;
+
+    TicTacToeBoard gameBoard = new TicTacToeBoard();
+
+    private int currentGuess = 0;
+
+    private string? guessFeedback = null;
+
+    private int playerTurn = 1;
+
+    private string playerMark = "";
+
+    private (string one, string two, string three, string four, string five, string six, string seven, string eight, string nine) boardValues => gameBoard.board;
+
+    private string boardSate = ""; 
+
+    private void StartGame()
+    {
+        gameStarted = true;
+        gameBoard.ResetBoard();
+        currentGuess = 0;
+        playerTurn = 1;
+        guessFeedback = string.Empty;
+        boardSate = gameBoard.boardState;
+    }
+
+    private void ChangePlayerTurn()
+    {
+        playerTurn = playerTurn == 1 ? 2 : 1; // Toggle between player 1 and player 2
+    }
+
+    private void SetPlayerMark()
+    {
+        playerMark = (playerTurn == 1) ? "X" : "O"; // Set playerMark to 'X' if playerTurn is 1, otherwise set it to 'O'
+    }
+
+    // collect current guess
+    private void MarkSpace()
+    {
+
+        SetPlayerMark(); // update board in free space with player's mark
+
+        if (currentGuess < 1 || currentGuess > 9) // check for value being in range
+        {
+            guessFeedback = $"{currentGuess} is out of the game board range, try again!";
+            return;
+        }
+
+
+        if (!gameBoard.IsSquareFree(currentGuess.ToString())) // check if square is free on board
+        {
+            guessFeedback = $"Square {currentGuess} is not open, try again!"; ;
+            return;
+
+        }
+
+
+
+        gameBoard.UpdateBoard(currentGuess.ToString(), playerMark); // use board method to update board with correct mark
+
+        gameBoard.CheckBoard(); // check for winner
+
+        boardSate = gameBoard.boardState;
+
+		currentGuess = 0; // reset current guess after a valid guess
+
+        ChangePlayerTurn(); // Change player turn after a valid guess
+
+        guessFeedback = "";
+
+
+     }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            MarkSpace();
+            // Optionally, prevent default form submission if inside a form
+            await Task.CompletedTask;
+        }
+    }
+}
+
+

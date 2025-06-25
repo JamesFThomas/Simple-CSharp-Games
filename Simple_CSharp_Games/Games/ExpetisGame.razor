@@ -1,0 +1,132 @@
+﻿@using Simple_CSharp_Games.Models;
+
+@if (!gameStarted)
+{
+	<button class="btn btn-primary" @onclick="StartGame">Play Game</button>
+}
+else
+{
+
+	@if (!expetiGame.StillGuessing)
+	{
+		<h3>Player #@playerTurn Won!</h3>
+		<p class="alert alert-success"> @expetiGame.TargetNumber was the target!</p>
+		<button class="btn btn-primary" @onclick="StartGame">Play Again</button>
+	}
+	else
+	{
+		<p class="m-2">Guess a number between 0 and 9:</p>
+		<p class="m-2">Player Turn: @playerTurn</p>
+        <input 
+			type="number" 
+			class="m-2 p-1" 
+			min="0" 
+			max="9" 
+			@bind-value="currentGuess"
+			@bind-value:event="oninput"
+			@onkeydown="HandleKeyDown" />
+
+		<button class="btn btn-primary " @onclick="SubmitGuess">Submit Guess</button>
+
+		@if (!string.IsNullOrEmpty(guessFeedback))
+		{
+			@if (!string.IsNullOrEmpty(bgColor) && bgColor.Equals("success"))
+			{
+				<div class="alert alert-warning m-2">@guessFeedback</div>
+			}
+			
+			@if (!string.IsNullOrEmpty(bgColor) && bgColor.Equals("info"))
+			{
+				<div class="alert alert-info m-2">@guessFeedback</div>
+			}
+
+			@if (!string.IsNullOrEmpty(bgColor) && bgColor.Equals("danger"))
+			{
+				<div class="alert alert-danger m-2">@guessFeedback</div>
+			}
+		}
+
+		@if (expetiGame.Guesses.Count > 0)
+		{
+			<h6 class="m-2">Previous Guesses:</h6>
+			@foreach (var guess in expetiGame.Guesses)
+			{
+				<p class="d-inline-flex p-2">@guess</p>
+			}
+
+		}
+
+	}
+}
+
+@code {
+
+	private ExpetiGameState expetiGame = new ExpetiGameState();
+
+	private int currentGuess;
+
+	private string? guessFeedback;
+
+	private string? bgColor;
+
+	private bool gameStarted = false; 
+
+	private int playerTurn = 1; 
+
+
+	private void StartGame()    
+	{
+		gameStarted = true; 
+		expetiGame.Start();
+		currentGuess = 0;
+		guessFeedback = string.Empty; 
+	}
+
+	private void ChangePlayerTurn()
+	{
+		playerTurn = playerTurn == 1 ? 2 : 1;										// Toggle between player 1 and player 2
+	}
+
+	private void SubmitGuess()
+	{
+		if ( currentGuess < 0 || currentGuess > 9)
+		{
+			bgColor = "info";
+			guessFeedback = $"Dude {currentGuess} is out of range, try again!";   // Set feedback message for incorrect guess
+			return;
+		}
+		if (expetiGame.IsValidGuess(currentGuess))
+		{
+			if (currentGuess == expetiGame.TargetNumber)							// Check if the current guess matches the target
+			{
+				expetiGame.GameOver(); 
+				guessFeedback = string.Empty;		
+				return;
+			}
+
+			bgColor = "success";
+			guessFeedback = $"Valid guess but {currentGuess} is not the target!";	// Set feedback message for incorrect guess
+
+			ChangePlayerTurn();														// Change player turn after a valid guess
+			expetiGame.TrackPlayerGuess(currentGuess);								// Add correct guess to the game state Guesses List
+
+		}
+		else
+		{
+			bgColor = "danger";
+			guessFeedback = $"Invalid guess {currentGuess} has already been guessed.";   // Set invalid feedback message
+		}
+
+	}
+
+	private async Task HandleKeyDown(KeyboardEventArgs e)
+	{
+		if (e.Key == "Enter")
+		{
+			SubmitGuess();
+			// Optionally, prevent default form submission if inside a form
+			await Task.CompletedTask;
+		}
+	}
+
+}

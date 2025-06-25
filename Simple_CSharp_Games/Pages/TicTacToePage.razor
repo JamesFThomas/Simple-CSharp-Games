@@ -1,0 +1,24 @@
+﻿@page "/tictactoe"
+
+@using Simple_CSharp_Games.Games
+
+<h1>@GameTitle</h1>
+
+<p>	@GameDescription1 </p>
+<p>	@GameDescription2 </p>
+<p>	@GameDescription3 </p>
+
+@* implement TicTacToeGame component here *@
+<TicTacToe />
+
+@code {
+
+	private string GameTitle = "Tic Tac Toe";
+
+	// Game description or instructions for Tic Tac Toe here
+	private string GameDescription1 = "Tic Tac Toe is a classic two-player game where players take turns marking open squares on a 3x3 grid.";
+	private string GameDescription2 = "Player 1 will be 'X' and player 2 will be 'O' when making their marks for their turn.";
+	private string GameDescription3 = "The first player to get three of their marks in a row, column, or diagonal wins the game.";
+
+
+}

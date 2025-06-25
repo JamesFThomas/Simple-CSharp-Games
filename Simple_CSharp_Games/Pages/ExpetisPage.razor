@@ -1,0 +1,23 @@
+﻿@page "/expetispage"
+
+@using Simple_CSharp_Games.Games
+
+<PageTitle>@GameTitle</PageTitle>
+
+<h1>@GameTitle</h1>
+
+<p>	@GameDescription1 </p>
+<p>	@GameDescription2 </p>
+<p>	@GameDescription3 </p>
+
+<ExpetisGame />
+
+
+@code {
+	private string GameTitle = "Expeti's Game";
+
+	private string GameDescription1 = "This is a simple two player game where players take turns guessing a random number between 0 and 9.";
+	private string GameDescription2 = "The game will choose the target number and keep track of players guesses, until one player guesses the target number.";
+	private string GameDescription3 = "Players can not make the same guess twice, and the game will continue one player guesses the target correctly.";
+
+}
