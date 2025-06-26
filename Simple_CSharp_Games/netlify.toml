@@ -1,5 +1,3 @@
-[
-build]
+[build]
   command = "dotnet publish -c Release"
   publish = "Simple_CSharp_Games/bin/Release/net8.0/publish"
-
