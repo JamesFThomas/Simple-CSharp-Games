@@ -1,0 +1,26 @@
+﻿@page "/manticore"
+
+
+@using Simple_CSharp_Games.Games
+
+<h1>@GameTitle</h1>
+
+<p>	@GameDescription1 </p>
+<p>	@GameDescription2 </p>
+<p>	@GameDescription3 </p>
+<p>	@GameDescription4 </p>
+
+<ManticoreGame />
+
+@code {
+
+	private string GameTitle = "Hunting The Manticore";
+
+	// Game description or instructions here
+	private string GameDescription1 = "Hunting The Manticore is a single-player game where you must protect your city from the attacks of flying warship.";
+	private string GameDescription2 = "Each turn you will give a chance to guess the ships distance from the city and fire a single shot from your magic cannon";
+	private string GameDescription3 = "Following each shot, the game will inform the player if the shot was short, long, or a direct hit, dealing a randomly calculated amount of damage.";
+	private string GameDescription4 = "With each turn it still flying the Manticore will deal 1 damage to the city, you must destroy the Manticore before each reaches the city or all is lost.";
+
+
+}
