@@ -13,6 +13,16 @@
 		<DisableBlazorCompression>true</DisableBlazorCompression>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <None Remove="Games\ManticoreGame.razor.css" />
+	  <None Remove="Pages\ManticorePage.razor.css" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Games\ManticoreGame.razor.css" />
+	  <Content Include="Pages\ManticorePage.razor.css" />
+	</ItemGroup>
+
 
 
 	<ItemGroup>

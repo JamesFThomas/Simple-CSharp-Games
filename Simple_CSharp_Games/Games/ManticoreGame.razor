@@ -1,23 +1,13 @@
 ﻿@using Simple_CSharp_Games.Models;
 
-@if (!gameStarted)
-{
-	<button class="btn btn-primary" @onclick="StartGame">Play Game</button>
-}
-else
-{
+<div class="game-container">
 	<h2>Hunting The Manticore</h2>
-
-	<p class="m-2">Game coming soon</p>
-}
+    <p class="m-2">Game coming soon</p>
+</div>
 
 @code {
-	private bool gameStarted = false;
 
-	private void StartGame()
-	{
-		gameStarted = true;
-	}
+   
 
 }
 

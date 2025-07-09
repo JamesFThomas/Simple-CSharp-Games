@@ -3,24 +3,72 @@
 
 @using Simple_CSharp_Games.Games
 
-<h1>@GameTitle</h1>
 
-<p>	@GameDescription1 </p>
-<p>	@GameDescription2 </p>
-<p>	@GameDescription3 </p>
-<p>	@GameDescription4 </p>
+@if (showHero)
+{
+	<div class="hero-section">
+		<div class="hero-section-content">
+			<div class="hero-section-text">
+				<p>	@GameDescription1 </p>
+				<p>	@GameDescription2 </p>
+				<p>	@GameDescription3 </p>
+				<p>	@GameDescription4 </p>
+				<button class="btn btn-primary" @onclick="ShowIntro">Play Game</button>
+			</div>
+			<img class="hero-section-image" src="/images/Manticore_Hero.png" />
+		</div>
+	</div>
+}
+@if(showIntro && !showHero )
+{
+	<div class="intro-section">
+		<div class="intro-section-content">
+			<div class="intro-section-text">
+				<p>@SetupText1</p>
+				<p>@SetupText2</p>
+				<p>@SetupText3</p>
+			</div>
+			<img class="intro-section-image" src="/images/Manticore_Intro.png" />
+		</div>
+	</div>
 
-<ManticoreGame />
+}
+@if (!showHero && !showIntro )
+{
+	<ManticoreGame />
+}
+
 
 @code {
 
-	private string GameTitle = "Hunting The Manticore";
+	private bool showHero = true;
+	private bool showIntro = false;
 
-	// Game description or instructions here
-	private string GameDescription1 = "Hunting The Manticore is a single-player game where you must protect your city from the attacks of flying warship.";
-	private string GameDescription2 = "Each turn you will give a chance to guess the ships distance from the city and fire a single shot from your magic cannon";
-	private string GameDescription3 = "Following each shot, the game will inform the player if the shot was short, long, or a direct hit, dealing a randomly calculated amount of damage.";
-	private string GameDescription4 = "With each turn it still flying the Manticore will deal 1 damage to the city, you must destroy the Manticore before each reaches the city or all is lost.";
 
+	private string GameDescription1 = "Hunting the Manticore is a solo game to defend your city from an airborne assault.";
+	private string GameDescription2 = "Each round, guess the ship’s distance and fire a shot from your enchanted cannon.";
+	private string GameDescription3 = "After firing, you’ll be told if your shot fell short, went long, or hit its target.";
+	private string GameDescription4 = "Each turn the Manticore survives, it strikes the city for 1 point of damage.";
+
+
+	private string SetupText1 = "“The Manticore approaches!“ the guard cries.";
+	private string SetupText2 = "Man the cannon. Ready the defenses.";
+	private string SetupText3 = "This is your city’s final stand.";
+	
+
+	private async Task ShowIntro()
+	{
+		showHero = false;
+		showIntro = true;
+		await Task.Delay(3500);
+		ShowGame();
+	}
+
+	private void ShowGame()
+	{
+		showHero = false;
+		showIntro = false;
+	}
+	
 
 }
