@@ -34,7 +34,10 @@
 
             <div class="flex-row">
                 <p>Shots:</p>
-                <p>@gameState.Shots</p>
+                @foreach (var shot in @gameState.Shots)
+                {
+                    <p>@($"Range {shot.Guess} — was {shot.Result}!")</p>
+                }
             </div>
         }
         @if (showResult && !showManticoreAttack )
@@ -105,6 +108,7 @@
 
     private void Restart()
     {
+        guess = 0;
         showResult = false;
         showManticoreAttack = false;
         gameState.ResetGame();    
