@@ -31,4 +31,10 @@
 	</ItemGroup>
 
 
+
+	<ItemGroup>
+	  <Folder Include="wwwroot\images\tictactoe\" />
+	</ItemGroup>
+
+
 </Project>

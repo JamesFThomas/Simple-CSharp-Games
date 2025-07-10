@@ -46,11 +46,13 @@
             {
                 <p class="m-2"> That shot fell short </p>
                 <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
+                <img class="hero-section-image" src="/images/manticore/shot_short.png" />
             }
             @if (gameState.Shots.Last().Result == "Long")
             {
                 <p class="m-2">That shot went long</p>
                 <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
+                <img class="hero-section-image" src="/images/manticore/shot_long.png" />
             }
             @if (gameState.Shots.Last().Result == "Hit")
             {
@@ -112,6 +114,46 @@
         showResult = false;
         showManticoreAttack = false;
         gameState.ResetGame();    
+    }
+
+    private string GetCityImage()
+    {
+        int hp = gameState.City.Health;
+
+        if (hp > 13)
+            return "city_battered.png";
+
+        if (hp > 10)
+            return "city_scorched.png";
+
+        if (hp > 5)
+            return "city_damaged.png";
+
+        if (hp > 0)
+            return "city_critical.png";
+
+        return "city_destroyed.png";
+    }
+
+
+
+    private string GetManticoreImage()
+    {
+        var hp = gameState.Manticore.Health;
+
+        if (hp == 15)
+            return "manticore_healthy.png"; 
+
+        if (hp > 10)
+            return "manticore_scratched.png";  
+
+        if (hp > 5)
+            return "manticore_burned.png";  
+
+        if (hp > 0)
+            return "manticore_bleeding.png";  
+
+        return "manticore_dead.png";  
     }
 
 }
