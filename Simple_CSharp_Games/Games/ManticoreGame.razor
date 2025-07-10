@@ -1,16 +1,116 @@
 ﻿@using Simple_CSharp_Games.Models;
 
 <div class="game-container">
-	<h2>Hunting The Manticore</h2>
-    <p class="m-2">Game coming soon</p>
+    @if (!gameState.IsGameOver)
+    {
+        @if (!showResult && !showManticoreAttack)
+        {
+
+            <h2>Hunting The Manticore</h2>
+
+            <p class="m-2">Enter your range for the next shot</p>
+            <div class="flex-row">
+                <p>City Health:</p>
+                <p>@gameState.City.Health</p>
+            </div>
+            <div class="flex-row">
+                <p>Manticore Health:</p>
+                <p>@gameState.Manticore.Health</p>
+            </div>
+            <div class="flex-row">
+                <p>Round:</p>
+                <p>@gameState.Round</p>
+            </div>
+
+            <input 
+            type="number" 
+            min="0" 
+            max="100" 
+            class="form-control mb-2" 
+            placeholder="Enter cannon range (0-100)"
+            @bind="guess" />
+
+            <button class="btn btn-primary mb-2" onclick="@FireCannon">Fire Cannon</button>
+
+            <div class="flex-row">
+                <p>Shots:</p>
+                <p>@gameState.Shots</p>
+            </div>
+        }
+        @if (showResult && !showManticoreAttack )
+        {
+            @if ( gameState.Shots.Last().Result == "Short" )
+            {
+                <p class="m-2"> That shot fell short </p>
+                <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
+            }
+            @if (gameState.Shots.Last().Result == "Long")
+            {
+                <p class="m-2">That shot went long</p>
+                <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
+            }
+            @if (gameState.Shots.Last().Result == "Hit")
+            {
+                <p class="m-2">Direct Hit</p>
+                <button class="btn btn-primary mb-2" onclick="@NextStep"> next step</button>
+            }
+        }
+        @if (showManticoreAttack && !showResult )
+        {
+            <p class="m-2">The Manticore has hit the city</p>
+            <button class="btn btn-primary mb-2" onclick="@NextShot">next shot</button>
+
+        }
+
+    }
+    else
+    {
+        <h2>Game Over</h2>
+        <p>@(gameState.Winner == "City" ? "Victory! The Manticore has been defeated!" : "Defeat! The Manticore has destroyed the city.")</p>
+        <p class="m-2">The game has ended. Please refresh to play again.</p>
+
+        <button class="btn btn-primary mb-2" onclick="@Restart">Play Again</button>
+
+    }
 </div>
 
 @code {
 
-   
+    // All turn logic will happen in ManticoreGameState object the UI will simply display the state of the game.
+    private ManticoreGameState gameState = new ManticoreGameState();
+
+    private int guess;
+
+    private bool showResult = false;
+
+    private bool showManticoreAttack = false;
+
+    private void FireCannon()
+    {
+        gameState.TakeTurn(guess);
+        showResult = true;
+    }
+
+    private void NextStep()
+    {
+        showResult = false;
+        showManticoreAttack = true;	
+    }
+
+    private void NextShot()
+    {
+        showManticoreAttack = false;
+        guess = 0; // Reset the guess for the next shot
+    }
+
+    private void Restart()
+    {
+        showResult = false;
+        showManticoreAttack = false;
+        gameState.ResetGame();    
+    }
 
 }
-
 
 @* Update Code for Blazor Page
 // set starting values
