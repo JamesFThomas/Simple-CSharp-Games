@@ -5,5 +5,85 @@
     text-align: center;
     max-width: 700px;
     margin: 0 auto;
-    margin-top: 5rem;
 }
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-weight: bold;
+    font-size: 1rem;
+
+}
+.load-cannon-section {
+    display: flex;
+    align-items: center;
+}
+
+.load-cannon-content {
+    background-color: dimgrey;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: fit-content;
+}
+
+.load-cannon-text {
+    margin-bottom: 1rem;
+    text-align: center;
+    color: white;
+}
+
+.load-cannon-image {
+    height: 75vh;
+}
+
+
+.short-section,
+.long-section,
+.hit-section,
+.manticore-attack-section,
+.game-over-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 1rem;
+}
+
+.short-section-content,
+.long-section-content,
+.hit-section-content,
+.manticore-attack-content,
+.game-over-content {
+    background-color: dimgrey;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: fit-content;
+}
+
+.short-section-text,
+.long-section-text,
+.hit-section-text,
+.manticore-attack-text,
+.game-over-text {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.short-section-image,
+.long-section-image,
+.hit-section-image,
+.manticore-attack-image,
+.game-over-image {
+    height: 75vh;
+    width: auto;
+    align-self: center;
+}
+

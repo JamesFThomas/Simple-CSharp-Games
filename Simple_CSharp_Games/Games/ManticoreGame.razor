@@ -5,83 +5,128 @@
     {
         @if (!showResult && !showManticoreAttack)
         {
+            <div class="load-cannon-section">
+                <div class="load-cannon-content">
+                    <div class="load-cannon-text">
+                        <div class="status-row">
+                            <span>City Health: @gameState.City.Health</span>
+                            <span>Round: @gameState.Round</span>
+                            <span>Manticore Health: @gameState.Manticore.Health</span>
+                        </div>
 
-            <h2>Hunting The Manticore</h2>
+                        <p class="m-2">Set the cannon range for the next shot</p>
 
-            <p class="m-2">Enter your range for the next shot</p>
-            <div class="flex-row">
-                <p>City Health:</p>
-                <p>@gameState.City.Health</p>
+                        <input type="number"
+                               min="0"
+                               max="100"
+                               class="form-control mb-2"
+                               placeholder="Enter cannon range (0-100)"
+                               @bind="guess" />
+
+                        <div class="mb-2">
+                            <p>Shots:</p>
+                            @foreach (var shot in @gameState.Shots)
+                            {
+                                <p>@($"Range {shot.Guess} — was {shot.Result}!")</p>
+                            }
+                        </div>
+
+                        <button class="btn btn-primary mb-2" onclick="@FireCannon">Fire Cannon</button>
+                    </div>
+
+                    <img class="load-cannon-image" src="/images/manticore/cannon_range.png" />
+                </div>
             </div>
-            <div class="flex-row">
-                <p>Manticore Health:</p>
-                <p>@gameState.Manticore.Health</p>
-            </div>
-            <div class="flex-row">
-                <p>Round:</p>
-                <p>@gameState.Round</p>
-            </div>
 
-            <input 
-            type="number" 
-            min="0" 
-            max="100" 
-            class="form-control mb-2" 
-            placeholder="Enter cannon range (0-100)"
-            @bind="guess" />
 
-            <button class="btn btn-primary mb-2" onclick="@FireCannon">Fire Cannon</button>
-
-            <div class="flex-row">
-                <p>Shots:</p>
-                @foreach (var shot in @gameState.Shots)
-                {
-                    <p>@($"Range {shot.Guess} — was {shot.Result}!")</p>
-                }
-            </div>
         }
         @if (showResult && !showManticoreAttack )
         {
-            @if ( gameState.Shots.Last().Result == "Short" )
+
+            @if (gameState.Shots.Last().Result == "Short")
             {
-                <p class="m-2"> That shot fell short </p>
-                <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
-                <img class="hero-section-image" src="/images/manticore/shot_short.png" />
+                <div class="short-section">
+                    <div class="short-section-content">
+                        <div class="short-section-text">
+                            <p>That shot fell short.</p>
+                            <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
+                        </div>
+                        <img class="short-section-image" src="/images/manticore/shot_short.png" />
+                    </div>
+                </div>
             }
+
             @if (gameState.Shots.Last().Result == "Long")
             {
-                <p class="m-2">That shot went long</p>
-                <button class="btn btn-primary mb-2" onclick="@NextStep">next step</button>
-                <img class="hero-section-image" src="/images/manticore/shot_long.png" />
+                <div class="long-section">
+                    <div class="long-section-content">
+                        <div class="long-section-text">
+                            <p>That shot went long.</p>
+                            <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
+                        </div>
+                        <img class="long-section-image" src="/images/manticore/shot_long.png" />
+                    </div>
+                </div>
             }
+
             @if (gameState.Shots.Last().Result == "Hit")
             {
-                <p class="m-2">Direct Hit</p>
-                <button class="btn btn-primary mb-2" onclick="@NextStep"> next step</button>
+                <div class="hit-section">
+                    <div class="hit-section-content">
+                        <div class="hit-section-text">
+                            <p>Direct hit!</p>
+                            <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
+                        </div>
+                        <img class="hit-section-image" src="/images/manticore/@GetManticoreImage()" />
+                    </div>
+                </div>
             }
+
+
         }
         @if (showManticoreAttack && !showResult )
         {
-            <p class="m-2">The Manticore has hit the city</p>
-            <button class="btn btn-primary mb-2" onclick="@NextShot">next shot</button>
+            <div class="manticore-attack-section">
+                <div class="manticore-attack-content">
+                    <div class="manticore-attack-text">
+                        <p>The Manticore has hit the city</p>
+                        <button class="btn btn-primary mb-2" onclick="@NextShot">Next Shot</button>
+                    </div>
+                    <img class="manticore-attack-image" src="/images/manticore/@GetCityImage()" />
+                </div>
+            </div>
+
 
         }
 
     }
     else
     {
-        <h2>Game Over</h2>
-        <p>@(gameState.Winner == "City" ? "Victory! The Manticore has been defeated!" : "Defeat! The Manticore has destroyed the city.")</p>
-        <p class="m-2">The game has ended. Please refresh to play again.</p>
+        <div class="game-over-section">
+            <div class="game-over-content">
+                <div class="game-over-text">
+                    <h2>Game Over</h2>
+                    <p>
+                        @(gameState.Winner == "City"
+                            ? "Victory! The Manticore has been defeated!"
+                            : "Defeat! The Manticore has destroyed the city.")
+                    </p>
+                    <p class="m-2">The game has ended. Please refresh to play again.</p>
 
-        <button class="btn btn-primary mb-2" onclick="@Restart">Play Again</button>
+                    <button class="btn btn-primary mb-2" onclick="@Restart">Play Again</button>
+                </div>
+
+                <img class="game-over-image"
+                     src="/images/manticore/@(gameState.Winner == "City" ? "manticore_dead.png" : "city_destroyed.png")" />
+            </div>
+        </div>
+
 
     }
 </div>
 
 @code {
 
-    // All turn logic will happen in ManticoreGameState object the UI will simply display the state of the game.
     private ManticoreGameState gameState = new ManticoreGameState();
 
     private int guess;
@@ -105,7 +150,7 @@
     private void NextShot()
     {
         showManticoreAttack = false;
-        guess = 0; // Reset the guess for the next shot
+        guess = 0; 
     }
 
     private void Restart()

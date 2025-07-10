@@ -83,7 +83,7 @@ namespace Simple_CSharp_Games.Models
 
     public class Manticore 
     {
-        public int Health { get; set; } = 15;
+        public int Health { get; set; } = 5;
         public int Range { get; set; }
 
         private static readonly Random _random = new Random();
@@ -105,7 +105,7 @@ namespace Simple_CSharp_Games.Models
 
     public class  City
     {
-        public int Health { get; set; } = 5;
+        public int Health { get; set; } = 15;
 
         public City() { }
 
