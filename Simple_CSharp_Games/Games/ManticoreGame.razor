@@ -9,9 +9,12 @@
                 <div class="intro-section-content"> 
                     <img class="intro-section-image" src="/images/manticore/intro_image.png" /> 
                     <div class="intro-section-text"> 
-                        <p>@IntroText1</p> 
-                        <p>@IntroText2</p> 
-                        <p>@IntroText3</p>
+                        @{
+							var lines = GetCaptionLines("Intro", gameState.Manticore.Health, gameState.City.Health);
+						}
+						<p>@lines.Item1</p>
+						<p>@lines.Item2</p>
+						<p>@lines.Item3</p>
                         <button class="btn btn-primary mb-2" onclick="@StartGame">Load Cannon</button>
                     </div> 
                 </div> 
@@ -64,7 +67,12 @@
                     <div class="short-section-content">
                         <img class="short-section-image" src="/images/manticore/shot_short.png" />
                         <div class="short-section-text">
-                            <p>That shot fell short.</p>
+                            @{
+								var lines = GetCaptionLines("Short", gameState.Manticore.Health, gameState.City.Health);
+                            }
+                            <p>@lines.Item1</p>
+                            <p>@lines.Item2</p>
+                            <p>@lines.Item3</p>
                             <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
                         </div>
                     </div>
@@ -77,7 +85,12 @@
                     <div class="long-section-content">
                         <img class="long-section-image" src="/images/manticore/shot_long.png" />
                         <div class="long-section-text">
-                            <p>That shot went long.</p>
+							@{
+								var lines = GetCaptionLines("Long", gameState.Manticore.Health, gameState.City.Health);
+							}
+                            <p>@lines.Item1</p>
+                            <p>@lines.Item2</p>
+							<p>@lines.Item3</p>
                             <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
                         </div>
                     </div>
@@ -90,7 +103,12 @@
                     <div class="hit-section-content">
                         <img class="hit-section-image" src="/images/manticore/@GetManticoreImage()" />
                         <div class="hit-section-text">
-                            <p>Direct hit!</p>
+							@{
+								var lines = GetCaptionLines("Hit", gameState.Manticore.Health, gameState.City.Health);
+							}
+							<p>@lines.Item1</p>
+                            <p>@lines.Item2</p>
+							<p>@lines.Item3</p>
                             <button class="btn btn-primary mb-2" onclick="@NextStep">Next Step</button>
                         </div>
                     </div>
@@ -105,7 +123,12 @@
                 <div class="manticore-attack-content">
                     <img class="manticore-attack-image" src="/images/manticore/@GetCityImage()" />
                     <div class="manticore-attack-text">
-                        <p>The Manticore has hit the city</p>
+						@{
+							var lines = GetCaptionLines("Attack", gameState.Manticore.Health, gameState.City.Health);
+						}
+						<p>@lines.Item1</p>
+                        <p>@lines.Item2</p>
+						<p>@lines.Item3</p>
                         <button class="btn btn-primary mb-2" onclick="@ReloadCannon">Reload Cannon</button>
                     </div>
                 </div>
@@ -120,16 +143,14 @@
         <div class="game-over-section">
             <div class="game-over-content">
                 <img class="game-over-image"
-                src="/images/manticore/@(gameState.Winner == "City" ? "manticore_dead.png" : "city_destroyed.png")" />
+                     src="/images/manticore/@GetGameOverImage()" />
                 <div class="game-over-text">
-                    <h2>Game Over</h2>
-                    <p>
-                        @(gameState.Winner == "City"
-                                                ? "Victory! The Manticore has been defeated!"
-                                                : "Defeat! The Manticore has destroyed the city.")
-                    </p>
-                    <p class="m-2">The game has ended. Please refresh to play again.</p>
-
+                    @{
+						var lines = GetCaptionLines("", gameState.Manticore.Health, gameState.City.Health);
+                    }
+                    <p>@lines.Item1</p>
+                    <p>@lines.Item2</p>
+					<p>@lines.Item3</p>
                     <button class="btn btn-primary mb-2" onclick="@Restart">Play Again</button>
                 </div>
 
@@ -141,10 +162,6 @@
 </div>
 
 @code {
-
-    private string IntroText1 = "“The Manticore approaches!“ the guard cries.";
-    private string IntroText2 = "Man the cannon. Ready the defenses.";
-    private string IntroText3 = "This is your city’s final stand.";
 
     private ManticoreGameState gameState = new ManticoreGameState();
 
@@ -245,4 +262,138 @@
         return "manticore_dead.png";  
     }
 
+    private string GetGameOverImage()
+    {
+        if (gameState.City.Health == 0 && gameState.Manticore.Health == 0)
+            return "draw.png"; 
+
+        if (gameState.City.Health == 0)
+            return "city_destroyed.png";
+
+        if (gameState.Manticore.Health == 0)
+            return "manticore_dead.png";
+
+        return "unknown.png"; 
+    }
+
+    private (string, string, string) GetCaptionLines(string result, int manticoreHp, int cityHp)
+
+    {
+        return (result, manticoreHp, cityHp) switch
+        {
+            ("Intro", _, _) => ("“The Manticore approaches!“ the guard cries.","Man the cannon. Ready the defenses.","This is your city’s final stand."),
+            ("Short", _, _) => ("Your shot falls short", "The blast explodes beneath the flying ship.", "The Manticore circles, preparing to strike."),
+            ("Long", _, _) => ("Your shot flies long.", "It sails past the Manticore, missing wide.", "The beast turns and prepares to strike the city"),
+            (_, 0, 0) => ("Both destroyed in the battle.", "The wrecked ship smolders amidst the city’s ruined remains.", "No future rises from these ashes."),
+            (_, 15, _) => ("The Manticore appears in the distance.", "Its wings stretch wide above the clouds.", "The sky darkens — war is coming."),
+            ("Hit", > 10, _) => ("The Manticore has been hit.","Scorch marks streak its armored hull.","It descends, returning fire on the city."),
+            ("Hit", > 5, _) => ("Direct hit on the Manticore!", "Flames trail from its burning wings.", "It surges forward, firing on the city."),
+            ("Hit", > 0, _) => ("Another hit rips through the Manticore.","It bleeds fire from its broken hull.","It dives, desperate to strike back."),
+    		(_, 0, _) => ("The Manticore is destroyed.","Its burning wreckage smolders outside the city walls.","The people rise, bloodied but victorious."),
+			("Attack", _, > 13) => ("The Manticore strikes the city.", "The walls are battered, debris scattered across the streets.", "You ready the next shot."),
+            ("Attack", _, > 10) => ("The Manticore rains fire on the city.", "Flames lick the rooftops, black smoke rising from scorched stone.", "Your hands move fast — the cannon must fire again."),
+            ("Attack", _, > 5) => ("The Manticore’s assault intensifies.", "The city is badly damaged — smoke and rubble everywhere.", "You brace the cannon and light the fuse."),
+            ("Attack", _, > 0) => ("Another devastating strike ravages the city.", "The city is critical — towers fallen, fire in every street.", "You steady the cannon and prepare to fire again."),
+            (_, _, 0) => ("The city is destroyed.", "Bodies fill the streets beneath crumbling towers.", "The tale ends in fire, lost to the ages."),
+            _ => ("", "", "")
+        };
+    }
+
+
+
 }
+
+
+@*  
+---
+Draw – Both Destroyed
+“Both destroyed in the battle.”
+
+“The wrecked ship smolders amidst the city’s ruined remains.”
+
+“No future rises from these ashes.”
+
+---
+Cinematic Prelude – manticore_healthy / hp == 15
+“The Manticore appears in the distance.”
+
+“Its wings stretch wide above the clouds.”
+
+“The sky darkens — war is coming.”
+
+---
+Hit – manticore_scratched / hp > 10
+“The Manticore has been hit.”
+
+“Scorch marks streak its armored hull.”
+
+“It descends, returning fire on the city.”
+
+---
+Hit – manticore_burned / hp > 5
+“Direct hit on the Manticore!”
+
+“Flames trail from its burning wings.”
+
+“It surges forward, firing on the city.”
+
+---
+Hit – manticore_bleeding / hp > 0
+“Another hit rips through the Manticore.”
+
+“It bleeds fire from its broken hull.”
+
+“It dives, desperate to strike back.”
+
+---
+Hit – manticore_dead  / hp == 0
+Game Over – City Wins
+“The Manticore is destroyed.”
+
+“Its burning wreckage smolders outside the city walls.”
+
+“The people rise, bloodied but victorious.”
+
+
+---
+City – city_battered / hp > 13
+“The Manticore strikes the city.”
+
+“The walls are battered, debris scattered across the streets.”
+
+“You ready the next shot.”
+
+---
+ City – city_scorched / hp > 10
+“The Manticore rains fire on the city.”
+
+“Flames lick the rooftops, black smoke rising from scorched stone.”
+
+“Your hands move fast — the cannon must fire again.”
+
+---
+City – city_damaged / hp > 5
+“The Manticore’s assault intensifies.”
+
+“The city is badly damaged — smoke and rubble everywhere.”
+
+“You brace the cannon and light the fuse.”
+
+---
+City – city_critical / hp > 0
+“Another devastating strike ravages the city.”
+
+“The city is critical — towers fallen, fire in every street.”
+
+“You steady the cannon and prepare to fire again.”
+
+---
+Game Over – Manticore Wins  / hp == 0
+City Destroyed
+“The city is destroyed.”
+
+“Bodies fill the streets beneath crumbling towers.”
+
+“The tale ends in fire, lost to the ages.”
+
+*@

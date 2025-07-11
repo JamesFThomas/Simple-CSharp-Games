@@ -90,7 +90,8 @@ namespace Simple_CSharp_Games.Models
 
         public Manticore() 
         { 
-            Range = _random.Next(0, 101);
+            //Range = _random.Next(0, 101);
+            Range = 0;
         }
 
 
@@ -105,7 +106,7 @@ namespace Simple_CSharp_Games.Models
 
     public class  City
     {
-        public int Health { get; set; } = 15;
+        public int Health { get; set; } = 5;
 
         public City() { }
 
