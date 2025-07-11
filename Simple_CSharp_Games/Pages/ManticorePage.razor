@@ -1,48 +1,37 @@
 ﻿@page "/manticore"
 
+@layout GameLayout
 
 @using Simple_CSharp_Games.Games
 
+<div class="manticore-game-page">
 
-@if (showHero)
-{
-	<div class="hero-section">
-		<div class="hero-section-content">
-			<div class="hero-section-text">
-				<p>	@GameDescription1 </p>
-				<p>	@GameDescription2 </p>
-				<p>	@GameDescription3 </p>
-				<p>	@GameDescription4 </p>
-				<button class="btn btn-primary" @onclick="ShowIntro">Play Game</button>
+	@if (showHero)
+	{
+		<div class="hero-section">
+			<div class="hero-section-content">
+				<img class="hero-section-image" src="/images/manticore/hero_image.png" />
+				<div class="hero-section-text">
+					<p>	@GameDescription1 </p>
+					<p>	@GameDescription2 </p>
+					<p>	@GameDescription3 </p>
+					<p>	@GameDescription4 </p>
+					<button class="btn btn-primary" @onclick="ShowIntro">Play Game</button>
+				</div>
 			</div>
-			<img class="hero-section-image" src="/images/manticore/hero_image.png" />
 		</div>
-	</div>
-}
-@if(showIntro && !showHero )
-{
-	<div class="intro-section">
-		<div class="intro-section-content">
-			<div class="intro-section-text">
-				<p>@SetupText1</p>
-				<p>@SetupText2</p>
-				<p>@SetupText3</p>
-			</div>
-			<img class="intro-section-image" src="/images/manticore/intro_image.png" />
-		</div>
-	</div>
+	}
+	@if (!showHero)
+	{
+		<ManticoreGame />
+	}
 
-}
-@if (!showHero && !showIntro )
-{
-	<ManticoreGame />
-}
-
+</div>
 
 @code {
 
 	private bool showHero = true;
-	private bool showIntro = false;
+
 
 
 	private string GameDescription1 = "Hunting the Manticore is a solo game to defend your city from an airborne assault.";
@@ -51,23 +40,9 @@
 	private string GameDescription4 = "Each turn the Manticore survives, it strikes the city for 1 point of damage.";
 
 
-	private string SetupText1 = "“The Manticore approaches!“ the guard cries.";
-	private string SetupText2 = "Man the cannon. Ready the defenses.";
-	private string SetupText3 = "This is your city’s final stand.";
-	
-
-	private async Task ShowIntro()
+	private void ShowIntro()
 	{
 		showHero = false;
-		showIntro = true;
-		await Task.Delay(3500);
-		ShowGame();
-	}
-
-	private void ShowGame()
-	{
-		showHero = false;
-		showIntro = false;
 	}
 	
 

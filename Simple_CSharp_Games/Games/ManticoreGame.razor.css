@@ -7,6 +7,40 @@
     margin: 0 auto;
 }
 
+.intro-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.intro-section-content {
+    width: fit-content;
+    background-color: dimgrey;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.intro-section-image {
+    height: 75vh;
+}
+
+
+.intro-section-text p {
+    font-family: 'Cinzel', serif;
+    font-size: 1.75rem;
+    line-height: 1.6;
+    letter-spacing: 0.05rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
+    color: #eaeaea;
+    margin: 0.75rem 0;
+    max-width: 60ch;
+}
+
+
 .status-row {
     display: flex;
     justify-content: space-between;

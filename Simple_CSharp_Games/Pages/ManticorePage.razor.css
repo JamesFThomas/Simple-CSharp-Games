@@ -1,4 +1,16 @@
-﻿.hero-section {
+﻿.manticore-game-page {
+    background-color: #1a1a2e;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    color: white;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 3rem;
+}
+
+
+.hero-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -37,36 +49,4 @@
     align-self: center;
 }
 
-.intro-section {
-    display: flex;
-    flex-direction:column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.intro-section-content {
-    width:fit-content;
-    background-color: dimgrey;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.intro-section-image {
-    height: 75vh;
-}
-
-
-.intro-section-text p {
-    font-family: 'Cinzel', serif; 
-    font-size: 1.75rem;
-    line-height: 1.6;
-    letter-spacing: 0.05rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
-    color: #eaeaea;
-    margin: 0.75rem 0;
-    max-width: 60ch;
- }
 
