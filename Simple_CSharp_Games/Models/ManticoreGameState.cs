@@ -26,7 +26,11 @@ namespace Simple_CSharp_Games.Models
 
         public void CheckGameOver()
         {
-            if (Manticore.Health <= 0)
+            if (City.Health <= 0 && Manticore.Health <= 0)
+            {
+                Winner = "Draw";
+            }
+            else if (Manticore.Health <= 0)
             {
                 Winner = "City";
             }
@@ -108,11 +112,12 @@ namespace Simple_CSharp_Games.Models
     {
         public int Health { get; set; } = 5;
 
+        public MagicCannon cannon = new MagicCannon();
+
         public City() { }
 
         public void FireMagicCannon(int round, Manticore manticore)
-        {
-            MagicCannon cannon = new MagicCannon();
+        {           
             int damage = cannon.CalculateDamage(round);
             manticore.Health -= damage;
 

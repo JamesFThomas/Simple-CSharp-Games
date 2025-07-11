@@ -1,7 +1,7 @@
 ﻿@using Simple_CSharp_Games.Models;
 
 <div class="game-container">
-    @if (!gameState.IsGameOver)
+    @if (gameState.Winner == null)
     {
         @if (showIntro && !showResult && !showManticoreAttack && !showCannon )
         { 
@@ -138,15 +138,15 @@
         }
 
     }
-    else
+    @if(gameState.Winner != null)
     {
         <div class="game-over-section">
             <div class="game-over-content">
                 <img class="game-over-image"
-                     src="/images/manticore/@GetGameOverImage()" />
+                     src="@($"/images/manticore/{GetGameOverImage()}")" />
                 <div class="game-over-text">
                     @{
-						var lines = GetCaptionLines("", gameState.Manticore.Health, gameState.City.Health);
+						var lines = GetCaptionLines(gameState.Winner, gameState.Manticore.Health, gameState.City.Health);
                     }
                     <p>@lines.Item1</p>
                     <p>@lines.Item2</p>
@@ -264,14 +264,14 @@
 
     private string GetGameOverImage()
     {
-        if (gameState.City.Health == 0 && gameState.Manticore.Health == 0)
+        if (gameState.Winner == "Draw")
             return "draw.png"; 
 
-        if (gameState.City.Health == 0)
-            return "city_destroyed.png";
-
-        if (gameState.Manticore.Health == 0)
+        if (gameState.Winner == "City")
             return "manticore_dead.png";
+
+        if (gameState.Winner == "Manticore")
+            return "city_destroyed.png";
 
         return "unknown.png"; 
     }
@@ -284,17 +284,17 @@
             ("Intro", _, _) => ("“The Manticore approaches!“ the guard cries.","Man the cannon. Ready the defenses.","This is your city’s final stand."),
             ("Short", _, _) => ("Your shot falls short", "The blast explodes beneath the flying ship.", "The Manticore circles, preparing to strike."),
             ("Long", _, _) => ("Your shot flies long.", "It sails past the Manticore, missing wide.", "The beast turns and prepares to strike the city"),
-            (_, 0, 0) => ("Both destroyed in the battle.", "The wrecked ship smolders amidst the city’s ruined remains.", "No future rises from these ashes."),
+            ("Draw", _, _) => ("Both destroyed in the battle.", "The wrecked ship smolders amidst the city’s ruined remains.", "No future rises from these ashes."),
             (_, 15, _) => ("The Manticore appears in the distance.", "Its wings stretch wide above the clouds.", "The sky darkens — war is coming."),
             ("Hit", > 10, _) => ("The Manticore has been hit.","Scorch marks streak its armored hull.","It descends, returning fire on the city."),
             ("Hit", > 5, _) => ("Direct hit on the Manticore!", "Flames trail from its burning wings.", "It surges forward, firing on the city."),
             ("Hit", > 0, _) => ("Another hit rips through the Manticore.","It bleeds fire from its broken hull.","It dives, desperate to strike back."),
-    		(_, 0, _) => ("The Manticore is destroyed.","Its burning wreckage smolders outside the city walls.","The people rise, bloodied but victorious."),
+            ("City", _, _) => ("The Manticore is destroyed.", "Its burning wreckage smolders outside the city walls.", "The people rise, bloodied but victorious."),
 			("Attack", _, > 13) => ("The Manticore strikes the city.", "The walls are battered, debris scattered across the streets.", "You ready the next shot."),
             ("Attack", _, > 10) => ("The Manticore rains fire on the city.", "Flames lick the rooftops, black smoke rising from scorched stone.", "Your hands move fast — the cannon must fire again."),
             ("Attack", _, > 5) => ("The Manticore’s assault intensifies.", "The city is badly damaged — smoke and rubble everywhere.", "You brace the cannon and light the fuse."),
             ("Attack", _, > 0) => ("Another devastating strike ravages the city.", "The city is critical — towers fallen, fire in every street.", "You steady the cannon and prepare to fire again."),
-            (_, _, 0) => ("The city is destroyed.", "Bodies fill the streets beneath crumbling towers.", "The tale ends in fire, lost to the ages."),
+            ("Manticore", _, _) => ("The city is destroyed.", "Bodies fill the streets beneath crumbling towers.", "The tale ends in fire, lost to the ages."),
             _ => ("", "", "")
         };
     }
@@ -302,98 +302,3 @@
 
 
 }
-
-
-@*  
----
-Draw – Both Destroyed
-“Both destroyed in the battle.”
-
-“The wrecked ship smolders amidst the city’s ruined remains.”
-
-“No future rises from these ashes.”
-
----
-Cinematic Prelude – manticore_healthy / hp == 15
-“The Manticore appears in the distance.”
-
-“Its wings stretch wide above the clouds.”
-
-“The sky darkens — war is coming.”
-
----
-Hit – manticore_scratched / hp > 10
-“The Manticore has been hit.”
-
-“Scorch marks streak its armored hull.”
-
-“It descends, returning fire on the city.”
-
----
-Hit – manticore_burned / hp > 5
-“Direct hit on the Manticore!”
-
-“Flames trail from its burning wings.”
-
-“It surges forward, firing on the city.”
-
----
-Hit – manticore_bleeding / hp > 0
-“Another hit rips through the Manticore.”
-
-“It bleeds fire from its broken hull.”
-
-“It dives, desperate to strike back.”
-
----
-Hit – manticore_dead  / hp == 0
-Game Over – City Wins
-“The Manticore is destroyed.”
-
-“Its burning wreckage smolders outside the city walls.”
-
-“The people rise, bloodied but victorious.”
-
-
----
-City – city_battered / hp > 13
-“The Manticore strikes the city.”
-
-“The walls are battered, debris scattered across the streets.”
-
-“You ready the next shot.”
-
----
- City – city_scorched / hp > 10
-“The Manticore rains fire on the city.”
-
-“Flames lick the rooftops, black smoke rising from scorched stone.”
-
-“Your hands move fast — the cannon must fire again.”
-
----
-City – city_damaged / hp > 5
-“The Manticore’s assault intensifies.”
-
-“The city is badly damaged — smoke and rubble everywhere.”
-
-“You brace the cannon and light the fuse.”
-
----
-City – city_critical / hp > 0
-“Another devastating strike ravages the city.”
-
-“The city is critical — towers fallen, fire in every street.”
-
-“You steady the cannon and prepare to fire again.”
-
----
-Game Over – Manticore Wins  / hp == 0
-City Destroyed
-“The city is destroyed.”
-
-“Bodies fill the streets beneath crumbling towers.”
-
-“The tale ends in fire, lost to the ages.”
-
-*@
