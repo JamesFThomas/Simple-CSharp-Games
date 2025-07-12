@@ -3,14 +3,32 @@
 <div class="game-container">
     @if (gameState.Winner == null)
     {
-        @if (showIntro && !showResult && !showManticoreAttack && !showCannon )
+        @if (showIntro && !showIntro2 && !showResult && !showManticoreAttack && !showCannon)
+        {
+            <div class="intro-section">
+                <div class="intro-section-content">
+                    <img class="hit-section-image" src="/images/manticore/manticore_healthy.png" />
+                    <div class="intro-section-text">
+                        @{
+                            var lines = GetCaptionLines("Intro", gameState.Manticore.Health, gameState.City.Health);
+                        }
+                        <p>@lines.Item1</p>
+                        <p>@lines.Item2</p>
+                        <p>@lines.Item3</p>
+                        <button class="btn btn-primary mb-2" onclick="@ReadyDefenses">Ready Defenses</button>
+                    </div>
+                </div>
+            </div>
+
+        }
+        @if (showIntro2 && !showIntro && !showResult && !showManticoreAttack && !showCannon)
         { 
             <div class="intro-section"> 
                 <div class="intro-section-content"> 
                     <img class="intro-section-image" src="/images/manticore/intro_image.png" /> 
                     <div class="intro-section-text"> 
                         @{
-							var lines = GetCaptionLines("Intro", gameState.Manticore.Health, gameState.City.Health);
+							var lines = GetCaptionLines("Intro2", gameState.Manticore.Health, gameState.City.Health);
 						}
 						<p>@lines.Item1</p>
 						<p>@lines.Item2</p>
@@ -20,8 +38,8 @@
                 </div> 
             </div> 
 
-        } 
-        @if (showCannon && !showResult && !showManticoreAttack && !showIntro)
+        }
+        @if (showCannon && !showResult && !showManticoreAttack && !showIntro && !showIntro2)
         {
             <div class="load-cannon-section">
                 <div class="load-cannon-content">
@@ -58,7 +76,7 @@
 
 
         }
-        @if (showResult && !showIntro && !showCannon && !showManticoreAttack)
+        @if (showResult && !showIntro && !showIntro2 && !showCannon && !showManticoreAttack)
         {
 
             @if (gameState.Shots.Last().Result == "Short")
@@ -117,7 +135,7 @@
 
 
         }
-        @if (showManticoreAttack && !showIntro && !showCannon && !showResult)
+        @if (showManticoreAttack && !showIntro && !showIntro2 && !showCannon && !showResult)
         {
             <div class="manticore-attack-section">
                 <div class="manticore-attack-content">
@@ -169,17 +187,29 @@
 
     private bool showIntro = true;
 
+    private bool showIntro2 = false;
+
     private bool showCannon = false;
 
     private bool showResult = false;
 
     private bool showManticoreAttack = false;
 
+    private void ReadyDefenses()
+	{
+		showIntro = false;
+		showIntro2 = true;
+		showCannon = false;
+		showResult = false;
+        showManticoreAttack = false;
+	}
+
 
     private void StartGame()
     {
-        showIntro = false;
         showCannon = true;
+        showIntro2 = false;
+		showIntro = false;
 		showManticoreAttack = false;
 		showResult = false;
     }
@@ -191,6 +221,7 @@
 		showCannon = false;
 		showManticoreAttack = false;
 		showIntro = false;
+		showIntro2 = false;
 
     }
 
@@ -200,6 +231,7 @@
         showResult = false;
 		showIntro = false;
 		showCannon = false;
+        showIntro2 = false;
     }
 
 
@@ -208,6 +240,7 @@
 		showCannon = true;
 		showResult = false;
 		showIntro = false;
+		showIntro2 = false;
         showManticoreAttack = false;
         guess = 0; 
     }
@@ -215,6 +248,7 @@
     private void Restart()
     {
 		showIntro = true;
+		showIntro2 = false;
         showResult = false;
         showManticoreAttack = false;
         showCannon = false;
@@ -281,11 +315,11 @@
     {
         return (result, manticoreHp, cityHp) switch
         {
-            ("Intro", _, _) => ("“The Manticore approaches!“ the guard cries.","Man the cannon. Ready the defenses.","This is your city’s final stand."),
+            ("Intro2", _, _) => ("“The Manticore approaches!“ the guard cries.","Man the cannon. Ready the defenses.","This is your city’s final stand."),
             ("Short", _, _) => ("Your shot falls short", "The blast explodes beneath the flying ship.", "The Manticore circles, preparing to strike."),
             ("Long", _, _) => ("Your shot flies long.", "It sails past the Manticore, missing wide.", "The beast turns and prepares to strike the city"),
             ("Draw", _, _) => ("Both destroyed in the battle.", "The wrecked ship smolders amidst the city’s ruined remains.", "No future rises from these ashes."),
-            (_, 15, _) => ("The Manticore appears in the distance.", "Its wings stretch wide above the clouds.", "The sky darkens — war is coming."),
+            ("Intro", _, _) => ("The Manticore appears in the distance.", "Its wings stretch wide above the clouds.", "The sky darkens — war is coming."),
             ("Hit", > 10, _) => ("The Manticore has been hit.","Scorch marks streak its armored hull.","It descends, returning fire on the city."),
             ("Hit", > 5, _) => ("Direct hit on the Manticore!", "Flames trail from its burning wings.", "It surges forward, firing on the city."),
             ("Hit", > 0, _) => ("Another hit rips through the Manticore.","It bleeds fire from its broken hull.","It dives, desperate to strike back."),
