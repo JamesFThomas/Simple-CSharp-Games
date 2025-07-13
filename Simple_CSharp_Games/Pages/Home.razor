@@ -2,21 +2,20 @@
 
 <PageTitle>About</PageTitle>
 
-<h1>Simple C# Games</h1>
+<h1>@Header</h1>
 
-<p>
-	This application is a collection of simple games that I created first as console applications utilizing the c# language.
-</p>
+<p>@Intro</p>
 
-<p>
-	Each page is a contains a different set of logic and rules with directions on how to play that specific game at the top.
-</p>
+<p>@CourseNote</p>
 
-<p>
-	I created these games while completing the C Sharp Player's Guide Course and afterwards wanted to share my creations with the world.
-</p>
+<p>@GameDetails</p>
 
+<p>@Closing</p>
 
-<p>
-	Hope you enjoy playing them as muc as I did making them.
-</p>
+@code {
+    private string Header = "Simple C# Games";
+    private string Intro = "This project brings together a set of simple games I first built as C# console apps.";
+    private string CourseNote = "I made these while working through the C# Player’s Guide and wanted to share them with the world.";
+    private string GameDetails = "Each game features its own logic, rules, and a unique AI-generated intro image that reflects its theme.";
+    private string Closing = "Hope you enjoy playing them as much as I enjoyed making them.";
+}
