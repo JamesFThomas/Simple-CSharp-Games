@@ -22,6 +22,7 @@
 	<ItemGroup>
 	  <Content Include="Games\ManticoreGame.razor.css" />
 	  <Content Include="Layout\BlankLayout.razor.css" />
+	  <Content Include="Pages\Home.razor.css" />
 	  <Content Include="Pages\ManticorePage.razor.css" />
 	</ItemGroup>
 

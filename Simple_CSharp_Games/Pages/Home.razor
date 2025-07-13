@@ -2,15 +2,20 @@
 
 <PageTitle>About</PageTitle>
 
-<h1>@Header</h1>
-
-<p>@Intro</p>
-
-<p>@CourseNote</p>
-
-<p>@GameDetails</p>
-
-<p>@Closing</p>
+<div class="about-page-container">
+    <div class="about-page-text">
+        <h1>@Header</h1>
+        <p>@Intro</p>
+        <p>@CourseNote</p>
+        <p>@GameDetails</p>
+        <p>@Closing</p>
+    </div>
+    <div class="about-page-gallery">
+        <img src="/images/tictactoe/tictactoe_intro.png" alt="Tic Tac Toe Intro" />
+        <img src="/images/expectis/expetis_intro.png" alt="Expeti's Game Intro" />
+        <img src="/images/manticore/hero_image.png" alt="Hunting the Manticore Intro" />
+    </div>
+</div>
 
 @code {
     private string Header = "Simple C# Games";
