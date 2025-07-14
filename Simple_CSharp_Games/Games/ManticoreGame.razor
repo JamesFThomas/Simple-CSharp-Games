@@ -53,13 +53,15 @@
 
                         <p class="m-2">Set the cannon range for the next shot</p>
 
-                        <input type="number"
-                        min="0"
-                        max="100"
-                        class="form-control mb-2"
-                        placeholder="Enter cannon range (0-100)"
-                        @bind="guess" />
-
+                        <input 
+                            type="number"
+                            min="0"
+                            max="100"
+                            class="form-control mb-2"
+                            placeholder="Enter cannon range (0-100)"
+                            @bind-value="guess"
+                            @bind-value:event="oninput"
+					        @onkeydown="HandleKeyDown" />
                         <div class="mb-2">
                             <p>Shots:</p>
                             @foreach (var shot in @gameState.Shots)
@@ -222,7 +224,16 @@
 		showManticoreAttack = false;
 		showIntro = false;
 		showIntro2 = false;
+    }
 
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            FireCannon();
+            await Task.CompletedTask;
+        }
     }
 
     private void NextStep()
