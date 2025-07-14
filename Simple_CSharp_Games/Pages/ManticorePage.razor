@@ -1,8 +1,10 @@
 ﻿@page "/manticore"
 
+@using Simple_CSharp_Games.Games
+
 @layout GameLayout
 
-@using Simple_CSharp_Games.Games
+<PageTitle>Hunting the Manticore</PageTitle>
 
 <div class="manticore-game-page">
 
@@ -10,7 +12,7 @@
 	{
 		<div class="hero-section">
 			<div class="hero-section-content">
-				<img class="hero-section-image" src="/images/manticore/hero_image.png" />
+				<img class="hero-section-image" src="/images/manticore/hero_image.png" alt="Manticore Hero Image" />
 				<div class="hero-section-text">
 					<p>	@GameDescription1 </p>
 					<p>	@GameDescription2 </p>

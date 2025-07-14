@@ -1,0 +1,45 @@
+﻿.expetis-page-container {
+    background-color: #1a1a2e;
+    min-height: 100vh;
+    color: white;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding: 3rem 1rem;
+}
+
+.expetis-hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.expetis-hero-content {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.expetis-hero-text {
+    text-align: center;
+    width: fit-content;
+    margin-bottom: 1rem;
+}
+
+.expetis-hero-text p {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
+    color: #eaeaea;
+    margin: 0.5rem 0;
+}
+
+.expetis-hero-image {
+    height: 75vh;
+    width: auto;
+    align-self: center;
+}

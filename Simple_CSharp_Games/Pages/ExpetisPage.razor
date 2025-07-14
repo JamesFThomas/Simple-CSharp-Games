@@ -2,22 +2,45 @@
 
 @using Simple_CSharp_Games.Games
 
-<PageTitle>@GameTitle</PageTitle>
+@layout GameLayout
 
-<h1>@GameTitle</h1>
+<div class="expetis-page-container">
 
-<p>	@GameDescription1 </p>
-<p>	@GameDescription2 </p>
-<p>	@GameDescription3 </p>
+    @if (!showGame)
+    {
+        <PageTitle>@GameTitle</PageTitle>
 
-<ExpetisGame />
+        <div class="expetis-hero-section">
+            <div class="expetis-hero-content">
+                <img class="expetis-hero-image"
+                src="/images/expectis/expetis_intro.png"
+                alt="Expeti's Game Intro" />
+                <div class="expetis-hero-text">
+                    <p>@GameDescription1</p>
+                    <p>@GameDescription2</p>
+                    <p>@GameDescription3</p>
+                    <button class="btn btn-primary" @onclick="ShowGame">Play Expeti's Game</button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <ExpetisGame />    }
 
+</div>
 
 @code {
 	private string GameTitle = "Expeti's Game";
+    private bool showGame = false;
 
 	private string GameDescription1 = "This is a simple two player game where players take turns guessing a random number between 0 and 9.";
 	private string GameDescription2 = "The game will choose the target number and keep track of players guesses, until one player guesses the target number.";
 	private string GameDescription3 = "Players can not make the same guess twice, and the game will continue one player guesses the target correctly.";
+
+        private void ShowGame()
+    {
+        showGame = true;
+    }
 
 }
