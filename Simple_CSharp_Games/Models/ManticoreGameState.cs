@@ -19,9 +19,10 @@ namespace Simple_CSharp_Games.Models
 
         public void TakeTurn(int guess)
         {
-            CheckShotResult(guess);
-            AttackCity();
-            CheckGameOver();
+            CheckShotResult(guess); // cannon fires if guess == Manticore.Range
+            CheckGameOver();        // check if game is over after cannon fires
+            AttackCity();           // Manticore attacks city
+            CheckGameOver();        // check if game is over after Manticore attacks
         }
 
         public void CheckGameOver()
@@ -87,7 +88,7 @@ namespace Simple_CSharp_Games.Models
 
     public class Manticore 
     {
-        public int Health { get; set; } = 5;
+        public int Health { get; set; } = 8;
         public int Range { get; set; }
 
         private static readonly Random _random = new Random();
@@ -95,7 +96,7 @@ namespace Simple_CSharp_Games.Models
         public Manticore() 
         { 
             //Range = _random.Next(0, 101);
-            Range = 0;
+            Range = 10;
         }
 
 
@@ -110,7 +111,7 @@ namespace Simple_CSharp_Games.Models
 
     public class  City
     {
-        public int Health { get; set; } = 5;
+        public int Health { get; set; } = 15;
 
         public MagicCannon cannon = new MagicCannon();
 

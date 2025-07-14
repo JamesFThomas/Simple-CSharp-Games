@@ -1,5 +1,8 @@
 ﻿@using Simple_CSharp_Games.Models;
 
+@inject IJSRuntime JS // Injecting JavaScript to use auto-focus functionality
+
+
 <div class="game-container">
     @if (gameState.Winner == null)
     {
@@ -15,8 +18,8 @@
                         <p>@lines.Item1</p>
                         <p>@lines.Item2</p>
                         <p>@lines.Item3</p>
-                        <button class="btn btn-primary mb-2" onclick="@ReadyDefenses">Ready Defenses</button>
                     </div>
+                    <button class="btn btn-primary mb-2" onclick="@ReadyDefenses">Ready Defenses</button>
                 </div>
             </div>
 
@@ -51,26 +54,33 @@
                             <span>Manticore Health: @gameState.Manticore.Health</span>
                         </div>
 
-                        <p class="m-2">Set the cannon range for the next shot</p>
+                        <div class="cannonInput-section">
+                            <p class="m-2">Set cannon range (0-100) of next shot =></p>
 
-                        <input 
-                            type="number"
-                            min="0"
-                            max="100"
-                            class="form-control mb-2"
-                            placeholder="Enter cannon range (0-100)"
-                            @bind-value="guess"
-                            @bind-value:event="oninput"
-					        @onkeydown="HandleKeyDown" />
-                        <div class="mb-2">
-                            <p>Shots:</p>
-                            @foreach (var shot in @gameState.Shots)
-                            {
-                                <p>@($"Range {shot.Guess} — was {shot.Result}!")</p>
-                            }
+                            <input 
+                                class="form-control mb-2"
+                                id="cannonInput"
+                                type="number"
+                                min="0"
+                                max="100"
+                                placeholder="Enter cannon range "
+                                @bind-value="guess"
+                                @bind-value:event="oninput"
+					            @onkeydown="HandleKeyDown" />
+                        </div>
+                        <div class="shots-history mb-3">
+                            <p>Shots History:</p>
+                            <div class="shots-row">
+                                @foreach (var shot in gameState.Shots)
+                                {
+                                    <span class="shot-entry">@($"Range {shot.Guess} — {shot.Result}!")</span>
+                                }
+                            </div>
                         </div>
 
-                        <button class="btn btn-primary mb-2" onclick="@FireCannon">Fire Cannon</button>
+                        <div>
+                            <button class="btn btn-primary mb-2" onclick="@FireCannon">Fire Cannon</button>
+                        </div>
                     </div>
 
                 </div>
@@ -226,7 +236,7 @@
 		showIntro2 = false;
     }
 
-
+	// method allows the user to press Enter to fire the cannon
     private async Task HandleKeyDown(KeyboardEventArgs e)
     {
         if (e.Key == "Enter")
@@ -235,6 +245,19 @@
             await Task.CompletedTask;
         }
     }
+
+    // method to use imported interop function
+    private async Task FocusInputAsync(string elementId)
+    {
+        await JS.InvokeVoidAsync("focusElementById", elementId);
+    }
+
+	// method to focus the input field when the component is rendered
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await FocusInputAsync("cannonInput");
+    }
+
 
     private void NextStep()
     {
