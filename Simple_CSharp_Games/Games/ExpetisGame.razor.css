@@ -1,0 +1,15 @@
+﻿.expetis-game-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.expetis-game-container input,
+.expetis-game-container button {
+    font-size: 1rem;
+    margin: 0.5rem;
+}

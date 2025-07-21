@@ -15,11 +15,13 @@
 				<img 
 				class="tictactoe-page-image" 
 				src="/images/tictactoe/tictactoe_intro.png" 
-				alt="Tic Tac Toe Intro" />
+				alt="Tic Tac Toe Intro" 
+			/>
 				<div class="tictactoe-page-text">
 					<p>@GameDescription1</p>
 					<p>@GameDescription2</p>
 					<p>@GameDescription3</p>
+					<p>@GameDescription4</p>
 					<button class="btn btn-primary" @onclick="ShowGame">Play Tic Tac Toe</button>
 				</div>
 			</div>
@@ -27,7 +29,6 @@
 	}
 	@if (showGame)
 	{
-		@* implement TicTacToeGame component here *@
 		<TicTacToe />
 	}
 
@@ -40,9 +41,11 @@
 
 	// Game description or instructions for Tic Tac Toe here
 	private string GameTitle = "Tic Tac Toe";
-	private string GameDescription1 = "Tic Tac Toe is a classic two-player game where players take turns marking open squares on a 3x3 grid.";
-	private string GameDescription2 = "Player 1 will be 'X' and player 2 will be 'O' when making their marks for their turn.";
-	private string GameDescription3 = "The first player to get three of their marks in a row, column, or diagonal wins the game.";
+	private string GameDescription1 = "Tic Tac Toe is a simple two-player game.";
+	private string GameDescription2 = "Players take turns marking spaces on a 3x3 grid.";
+	private string GameDescription3 = "Player 1 uses 'X' and Player 2 uses 'O'.";
+	private string GameDescription4 = "First to line up three marks wins the game.";
+
 
 
 	private void ShowGame()

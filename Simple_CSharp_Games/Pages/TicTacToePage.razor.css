@@ -18,11 +18,12 @@
 }
 
 .tictactoe-page-content {
+    width: fit-content;
+    background-color: dimgrey;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: fit-content;
+    text-align: center;
 }
 
 .tictactoe-page-text {

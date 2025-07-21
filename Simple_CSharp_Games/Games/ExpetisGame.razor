@@ -1,11 +1,6 @@
 ﻿@using Simple_CSharp_Games.Models;
 
-@if (!gameStarted)
-{
-	<button class="btn btn-primary" @onclick="StartGame">Play Game</button>
-}
-else
-{
+<div class="expetis-game-container">
 
 	@if (!expetiGame.StillGuessing)
 	{
@@ -17,14 +12,14 @@ else
 	{
 		<p class="m-2">Guess a number between 0 and 9:</p>
 		<p class="m-2">Player Turn: @playerTurn</p>
-        <input 
-			type="number" 
-			class="m-2 p-1" 
-			min="0" 
-			max="9" 
-			@bind-value="currentGuess"
-			@bind-value:event="oninput"
-			@onkeydown="HandleKeyDown" />
+		<input 
+		type="number" 
+		class="m-2 p-1" 
+		min="0" 
+		max="9" 
+		@bind-value="currentGuess"
+		@bind-value:event="oninput"
+		@onkeydown="HandleKeyDown" />
 
 		<button class="btn btn-primary " @onclick="SubmitGuess">Submit Guess</button>
 
@@ -34,7 +29,7 @@ else
 			{
 				<div class="alert alert-warning m-2">@guessFeedback</div>
 			}
-			
+
 			@if (!string.IsNullOrEmpty(bgColor) && bgColor.Equals("info"))
 			{
 				<div class="alert alert-info m-2">@guessFeedback</div>
@@ -49,17 +44,22 @@ else
 		@if (expetiGame.Guesses.Count > 0)
 		{
 			<h6 class="m-2">Previous Guesses:</h6>
+			<div class="flex-row">
+
 			@foreach (var guess in expetiGame.Guesses)
 			{
 				<p class="d-inline-flex p-2">@guess</p>
 			}
+			</div>
 
 		}
 
 	}
-}
+</div>
 
 @code {
+
+
 
 	private ExpetiGameState expetiGame = new ExpetiGameState();
 
@@ -69,16 +69,14 @@ else
 
 	private string? bgColor;
 
-	private bool gameStarted = false; 
-
 	private int playerTurn = 1; 
 
 
 	private void StartGame()    
 	{
-		gameStarted = true; 
 		expetiGame.Start();
 		currentGuess = 0;
+		playerTurn = 1;
 		guessFeedback = string.Empty; 
 	}
 
@@ -109,12 +107,14 @@ else
 
 			ChangePlayerTurn();														// Change player turn after a valid guess
 			expetiGame.TrackPlayerGuess(currentGuess);								// Add correct guess to the game state Guesses List
+			currentGuess = 0;
 
 		}
 		else
 		{
 			bgColor = "danger";
 			guessFeedback = $"Invalid guess {currentGuess} has already been guessed.";   // Set invalid feedback message
+			currentGuess = 0;
 		}
 
 	}

@@ -5,7 +5,27 @@ namespace Simple_CSharp_Games.Models
 {
     public class FountainGameState
     {
-        public FountainGameState() { }
+        public bool isPlayerAlive { get; set; } = true;
+        public bool IsFountainOn { get; set; } = false;
+        public int CurrentRow { get; set; }
+        public int CurrentColumn { get; set; }
+        public bool IsGameOver => !isPlayerAlive || (IsFountainOn && CurrentRow == 0 && CurrentColumn == 0);
+        public Board Board { get; set; }
+        public FountainGameState(string boardSize) 
+        {
+            Board = new Board(boardSize);
+            Board.LoadBoard();
+
+            // Set player starting position
+            CurrentRow = 0;
+            CurrentColumn = 0;
+        }
+
+        // Player Actions for the game
+        // move player to a new position
+        // sense what is happening in the current room
+        // enable to fountain in the right room
+        // check if the game is over
     }
 
     public class Game
