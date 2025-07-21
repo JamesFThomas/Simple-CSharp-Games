@@ -2,6 +2,8 @@
 
 @layout GameLayout
 
+@inject NavigationManager NavigationManager
+
 <PageTitle>About</PageTitle>
 
 <div class="about-page-container">
@@ -13,9 +15,10 @@
         <p>@Closing</p>
     </div>
     <div class="about-page-gallery">
-        <img src="/images/tictactoe/tictactoe_intro.png" alt="Tic Tac Toe Intro" />
-        <img src="/images/expectis/expetis_intro.png" alt="Expeti's Game Intro" />
-        <img src="/images/manticore/hero_image.png" alt="Hunting the Manticore Intro" />
+        <img src="/images/expectis/expetis_intro.png" alt="Expeti's Game Intro" @onclick="() => NavigateToPage(expectPage)" />
+        <img src="/images/tictactoe/tictactoe_intro.png" alt="Tic Tac Toe Intro" @onclick="() => NavigateToPage(ticPage)" />
+        <img src="/images/manticore/hero_image.png" alt="Hunting the Manticore Intro" @onclick="() => NavigateToPage(manticorePage)" />
+        <img src="/images/fountain/fountain_hero.png" alt="The Fountain Of Objects Intro Image" @onclick="() => NavigateToPage(fountainPage)" />
     </div>
 </div>
 
@@ -25,4 +28,14 @@
     private string CourseNote = "I made these while working through the C# Player’s Guide and wanted to share them with the world.";
     private string GameDetails = "Each game features its own logic, rules, and a unique AI-generated intro image that reflects its theme.";
     private string Closing = "Hope you enjoy playing them as much as I enjoyed making them.";
+
+    private string ticPage = "tictactoe";
+    private string expectPage = "expetispage";
+    private string manticorePage = "manticore";
+    private string fountainPage = "fountain";
+
+    private void NavigateToPage(string page)
+    {
+        NavigationManager.NavigateTo(page);
+    }
 }
