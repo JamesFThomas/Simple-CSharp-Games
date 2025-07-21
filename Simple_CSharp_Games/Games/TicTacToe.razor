@@ -1,11 +1,7 @@
 ﻿@using Simple_CSharp_Games.Models;
 
-@if (!gameStarted)
-{
-    <button class="btn btn-primary" @onclick="StartGame">Play Tic Tac Toe</button>
-}
-else
-{
+<div class="tictactoe-game-container">
+
     @if (boardSate == "open")
     {
     
@@ -93,7 +89,8 @@ else
         </div>
 
     }
-}
+
+</div>
 
 @code {
 
@@ -112,6 +109,11 @@ else
     private (string one, string two, string three, string four, string five, string six, string seven, string eight, string nine) boardValues => gameBoard.board;
 
     private string boardSate = ""; 
+
+    protected override void OnInitialized()
+    {
+        StartGame();
+    }
 
     private void StartGame()
     {
