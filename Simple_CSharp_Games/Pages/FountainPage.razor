@@ -1,0 +1,51 @@
+﻿@page "/fountain"
+
+@using Simple_CSharp_Games.Games
+
+@layout GameLayout
+
+<PageTitle>@GameTitle</PageTitle>
+
+<div class="fountain-game-page">
+
+	@if (showIntro)
+	{
+		<div class="hero-section">
+			<div class="hero-section-content">
+				<img 
+				class="hero-section-image" 
+				src="/images/manticore/hero_image.png" 
+				alt="Fountain of Objects HeroImage" 
+				/>
+				<div class="hero-section-text">
+					<p>	@GameDescription </p>
+					<p>	@GameDescription2 </p>
+					<p>	@GameDescription3 </p>
+					<p>	@GameDescription4 </p>
+					<button class="btn btn-primary" @onclick="ShowGame">Play Game</button>
+				</div>
+			</div>
+		</div>
+	}
+	@if (!showIntro)
+	{
+		<FountainGame />
+	}
+
+</div>
+
+@code {
+	bool showIntro = true;
+
+	string GameTitle = "The Fountain of Objects";
+
+	private string GameDescription = "Welcome to the Fountain of Objects!";
+	private string GameDescription2 = "You are in a dark cavern system with many rooms.";
+	private string GameDescription3 = "Your goal is to find the Fountain of Objects and return to the entrance.";
+	private string GameDescription4 = "Be careful, there are dangers lurking in the darkness! Good luck!";
+
+	private void ShowGame()
+	{
+		showIntro = false;
+	}
+}
