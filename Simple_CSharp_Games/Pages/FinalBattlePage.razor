@@ -1,0 +1,50 @@
+﻿@page "/finalbattle"
+
+@using Simple_CSharp_Games.Games
+
+@layout GameLayout
+
+<PageTitle>@GameTitle</PageTitle>
+
+<div class="fountain-game-page">
+
+	@if (showIntro)
+	{
+		<div class="hero-section">
+			<div class="hero-section-content">
+				<img class="hero-section-image"
+					 src="/images/battle/battle_hero.png"
+					 alt="The Final Battle Hero Image" />
+				<div class="hero-section-text">
+					<p>	@GameDescription </p>
+					<p>	@GameDescription2 </p>
+					<p>	@GameDescription3 </p>
+					<p>	@GameDescription4 </p>
+					<button class="btn btn-primary" @onclick="ShowGame">Play Game</button>
+				</div>
+			</div>
+		</div>
+	}
+	@if (!showIntro)
+	{
+		<FinalBattleGame />
+	}
+
+</div>
+
+@code {
+	bool showIntro = true;
+
+	string GameTitle = "The Final Battle";
+
+	private string GameDescription = "You stand upon the scorched slopes of the volcanic island.";
+	private string GameDescription2 = "Ash and flame fill the air as you approach the lair of the Uncoded One.";
+	private string GameDescription3 = "Your allies battle its minions while you strike at the heart of darkness itself.";
+	private string GameDescription4 = "Defeat the Uncoded One… and restore programming to the world.";
+
+
+	private void ShowGame()
+	{
+		showIntro = false;
+	}
+}
