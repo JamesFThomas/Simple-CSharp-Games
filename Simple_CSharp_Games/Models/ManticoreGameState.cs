@@ -88,15 +88,14 @@ namespace Simple_CSharp_Games.Models
 
     public class Manticore 
     {
-        public int Health { get; set; } = 8;
+        public int Health { get; set; } = 15;
         public int Range { get; set; }
 
         private static readonly Random _random = new Random();
 
         public Manticore() 
         { 
-            //Range = _random.Next(0, 101);
-            Range = 10;
+            Range = _random.Next(0, 101);
         }
 
 
