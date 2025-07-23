@@ -1,8 +1,48 @@
 ﻿
+@using Simple_CSharp_Games.Models
+
 <div class="fountain-game-container">
-	<h3>@GameTitle</h3>
+	@* must gather board size as first step to start the game *@
+	@if (fountainGameState == null)
+	{
+		<h3>@GameTitle</h3>
+		<label for="size-select">Choose board size:</label>
+        <select 
+			name="boardSize"
+			id="size-select"
+			@bind="SelectedBoardSize"
+			@bind:after="StartGame"
+        >
+			<option value="">--Please choose an option--</option>
+			<option value="small">small</option>
+			<option value="medium">medium</option>
+			<option value="large">large</option>
+        </select>
+
+	}
+	else
+	{
+		@* Show the board size input *@
+		<p>You have selected a board size of: <strong>@SelectedBoardSize</strong></p>
+		<p>The board zie is: <strong>@fountainGameState?.Board.Size</strong>  </p>
+
+		@* Create new FountainGameState with size input and start the game *@
+		@* Show where the player is on the board *@
+		@* Show an input to get the users action - move, sense, enable *@
+		@* When sense triggered show room sense return string *@
+	}
 </div>
 
 @code {
 	private string GameTitle = "The Fountain of Objects";
+
+	private string SelectedBoardSize = "";
+
+	private FountainGameState? fountainGameState;
+
+	private void StartGame()
+	{
+		fountainGameState = new FountainGameState(SelectedBoardSize);
+	}
+
 }
