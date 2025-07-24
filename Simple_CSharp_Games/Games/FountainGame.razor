@@ -1,24 +1,28 @@
 ﻿
 @using Simple_CSharp_Games.Models
 
+@inject IJSRuntime JS // Injecting JavaScript to use auto-focus functionality
+
 <div class="fountain-game-container">
 	@* must gather board size as first step to start the game *@
 	@* Create new FountainGameState with size input and start the game *@
 	@if (fountainGameState == null)
 	{
-		<h3>@GameTitle</h3>
-		<label for="size-select">Choose board size:</label>
-		<select 
-		name="boardSize"
-		id="size-select"
-		@bind="SelectedBoardSize"
-		@bind:after="StartGame"
+		<div 
+			class="fountain-startScreen"
+			id="startScreen"
+			tabindex="0"
+			@onkeydown="StartScreenKeyHandler"
 		>
-			<option value="">--Please choose an option--</option>
-			<option value="small">small</option>
-			<option value="medium">medium</option>
-			<option value="large">large</option>
-		</select>
+			<p>Welcome to @GameTitle game!</p>
+			<p>In this game, you will navigate a board and interact with various rooms.</p>
+			<p>Select a board size to begin your adventure.</p>
+			<p>
+				Press s = small board<br />
+				Press m = medium board<br />
+				Press l = large board<br />
+			</p> 
+		</div>
 
 	}
 	else
@@ -27,7 +31,11 @@
 		<p>You have selected a board size of: <strong>@SelectedBoardSize</strong></p>
 
 		@* Show where the player is on the board *@
-		<div class="fountain-gameBoard" style="width: 100%; max-width: 400px; margin: 0 auto;">
+		<div 
+			class="fountain-gameBoard" 
+			id="gameBoard"
+			style="width: 100%; max-width: 400px; margin: 0 auto;"
+			>
 			@for (int i = 0; i < fountainGameState?.Board.Rows; i++)
 			{
 				<div class="gameBoard-row" style="display: flex; flex-direction: row; width: 100%;">
@@ -59,22 +67,22 @@
 		</div>
 
 		@* Show an input to get the users action - move, sense, enable *@
-		<div class="ActionSelect-wrapper" style="">
-			<label for="action-select">Choose player action:</label>
-			<select 
-			name="playerActions"
-			id="action-select"
-			@bind="SelectedAction"
-			@bind:after="()=>PlayerAction(SelectedAction)">
-				<option value="">--Please choose an action--</option>
-				<option value="move north">move north</option>
-				<option value="move south">move south</option>
-				<option value="move east">move east</option>
-				<option value="move west">move west</option>
-				@* <option value="sense">sense room</option> *@
-				<option value="enable fountain">enable fountain</option>
-				<option value="disable fountain">disable fountain</option>
-			</select>
+		<div 
+			class="gameControls-wrapper"
+			id="gameControls"
+			style=""
+			 tabindex="0"
+			 @onkeydown="GameBoardKeyHandler">
+			<h4><strong>Game Controls</strong></h4>
+			<ol class="fountain-controls-list">
+				<li><strong>ArrowUp</strong> – Move north</li>
+				<li><strong>ArrowDown</strong> – Move south</li>
+				<li><strong>ArrowLeft</strong> – Move west</li>
+				<li><strong>ArrowRight</strong> – Move east</li>
+				<li><strong>e</strong> – Enable fountain</li>
+				<li><strong>d</strong> – Disable fountain</li>
+				<li><strong>q</strong> – Quit game</li>
+			</ol>
 		</div>
 
 		<p>The selected action is: <strong>@SelectedAction</strong>  </p>
@@ -98,6 +106,98 @@
 	private string ActionResultMessage = "";
 
 	private FountainGameState? fountainGameState;
+
+	// method to use imported interop function
+	private async Task FocusInputAsync(string elementId)
+	{
+		await JS.InvokeVoidAsync("focusElementById", elementId);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool firstRender)
+	{
+		string componentId = "";
+		if (firstRender && fountainGameState == null)
+		{
+			componentId = "startScreen";
+		}
+		else
+		{
+			componentId = "gameControls";
+		}
+
+		// Console.WriteLine($"OnAfterRenderAsync: focusing {componentId}");
+		await FocusInputAsync(componentId);
+	}
+
+	//StartScreenKeyHandler and GameBoardKeyHandler
+	private async Task StartScreenKeyHandler(KeyboardEventArgs e)
+	{ 
+		Console.WriteLine($"Key pressed: {e.Key}");
+
+		string size = "";
+
+		if (e.Key == "s")
+		{
+			size = "small";
+		}
+		if (e.Key == "m")
+		{
+			size = "medium";
+		}
+		if (e.Key == "l")
+		{
+			size = "large";
+		}
+
+		if (!string.IsNullOrEmpty(size))
+		{
+			SelectedBoardSize = size;
+			StartGame();
+		}
+		await Task.CompletedTask;
+	}
+
+	private async Task GameBoardKeyHandler(KeyboardEventArgs e)
+	{
+		string action = "";
+		if (e.Key == "ArrowUp")
+		{
+			action = "move north";
+		}
+		else if (e.Key == "ArrowDown")
+		{
+			action = "move south";
+		}
+		else if (e.Key == "ArrowLeft")
+		{
+			action = "move west";
+		}
+		else if (e.Key == "ArrowRight")
+		{
+			action = "move east";
+		}
+		else if (e.Key == "e")
+		{
+			action = "enable fountain";
+		}
+		else if (e.Key == "d")
+		{
+			action = "disable fountain";
+		}
+		else if (e.Key == "q")
+		{
+			action = "quit";
+		}
+
+
+		if (!string.IsNullOrEmpty(action))
+		{
+			SelectedAction = action;
+			PlayerAction(action);
+		}
+		await Task.CompletedTask;
+
+	}
 
 	private void StartGame()
 	{

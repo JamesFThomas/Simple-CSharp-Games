@@ -110,13 +110,16 @@ namespace Simple_CSharp_Games.Models
 
         if (input == "move north")
         {
-            if (IsAValidMove(CurrentRow - 1, CurrentColumn))
-            {
-                CurrentRow -= 1; // update player position
-                result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn); // sense the room
-            }
+                if (IsAValidMove(CurrentRow - 1, CurrentColumn))
+                {
+                    CurrentRow -= 1; // update player position
+                    result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn); // sense the room
+                }
+                else
+                {
 
-            result = InvalidMove(input);
+                    result = InvalidMove(input);
+                }
         }
         else if (input == "move south")
         {
@@ -124,10 +127,13 @@ namespace Simple_CSharp_Games.Models
             {
                 CurrentRow += 1;
                 result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
-            }
+                }
+            else
+            {
 
-            result = InvalidMove(input);
-        }
+                result = InvalidMove(input);
+            }
+            }
         else if (input == "move east")
         {
             if (IsAValidMove(CurrentRow, CurrentColumn + 1))
@@ -135,9 +141,13 @@ namespace Simple_CSharp_Games.Models
                 CurrentColumn += 1;
                 result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
             }
+            else
+            {
 
-            result = InvalidMove(input);
-        }
+                result = InvalidMove(input);
+            }
+
+            }
         else if (input == "move west")
         {
             if (IsAValidMove(CurrentRow, CurrentColumn - 1))
@@ -145,10 +155,13 @@ namespace Simple_CSharp_Games.Models
                 CurrentColumn -= 1;
                 result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
             }
+            else
+            {
 
-            result = InvalidMove(input);
-            
-        }
+                result = InvalidMove(input);
+            }
+
+            }
         else if (input == "enable fountain")
         {
             (result, IsFountainOn) = EnableFountain(CurrentRow, CurrentColumn, IsFountainOn);
@@ -177,13 +190,15 @@ namespace Simple_CSharp_Games.Models
         var currentRoom = Rooms[CurrentRow, CurrentColumn];
 
 
-        if (currentRoom is IActivatableRoom activatableRoom)
-        {
-            IsFountainOn = true;
-            message = activatableRoom.Enable();
-        }
-
-            message = "You can not interact with the fountain because it is not in this room.";
+            if (currentRoom is IActivatableRoom activatableRoom)
+            {
+                IsFountainOn = true;
+                message = activatableRoom.Enable();
+            }
+            else 
+            { 
+                message = "You can not interact with the fountain because it is not in this room.";
+            }
 
             return (message, IsFountainOn);
     }
@@ -194,14 +209,15 @@ namespace Simple_CSharp_Games.Models
             string message = string.Empty;
             var currentRoom = Rooms[CurrentRow, CurrentColumn];
 
-        if (currentRoom is IActivatableRoom activatableRoom)
-        {
-            IsFountainOn = false;
-            message = activatableRoom.Disable();
-        }
-
-        message = "You can not interact with the fountain because it is not in this room.";
-        
+            if (currentRoom is IActivatableRoom activatableRoom)
+            {
+                IsFountainOn = false;
+                message = activatableRoom.Disable();
+            }
+            else 
+            { 
+                message = "You can not interact with the fountain because it is not in this room.";
+            }
         return (message, IsFountainOn);
     }
 
