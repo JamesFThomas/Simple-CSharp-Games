@@ -5,11 +5,11 @@ namespace Simple_CSharp_Games.Models
 {
     public class FountainGameState
     {
-        public bool isPlayerAlive { get; set; } = true;
+        public bool IsPlayerAlive { get; set; } = true;
         public bool IsFountainOn { get; set; } = false;
         public int CurrentRow { get; set; }
         public int CurrentColumn { get; set; }
-        public bool IsGameOver => !isPlayerAlive || (IsFountainOn && CurrentRow == 0 && CurrentColumn == 0);
+        public bool IsGameOver => !IsPlayerAlive || (IsFountainOn && CurrentRow == 0 && CurrentColumn == 0);
         public Board Board { get; set; }
         public FountainGameState(string boardSize) 
         {
@@ -22,85 +22,16 @@ namespace Simple_CSharp_Games.Models
         }
 
         // Player Actions for the game
-        // move player to a new position
-        // sense what is happening in the current room
-        // enable to fountain in the right room
+        public string MovePlayer(string userInput)
+        {
+            string result = string.Empty;
+
+            (CurrentRow, CurrentColumn, result, IsFountainOn, IsPlayerAlive) = Board.MovePlayer(userInput, CurrentRow, CurrentColumn, IsFountainOn,IsPlayerAlive);
+
+            return result;
+        }
+
         // check if the game is over
-    }
-
-    public class Game
-    {
-        public void Start()
-        {
-
-            DisplayGameExplanation();
-
-            var board = CreateBoard();
-            var player = new Player();
-
-
-
-            while (player.IsAlive)
-            {
-                board.DisplayBoard(player);
-
-                board.MovePlayer(player);
-
-                var didPlayerWin = (player.CurrentRow == 0 && player.CurrentColumn == 0) && board.IsFountainOn == true;
-
-                if (didPlayerWin == true)
-                {
-                    board.PlayerWon(player);
-                    break;
-                }
-            }
-
-        }
-
-        public void DisplayGameExplanation()
-        {
-            Console.ForegroundColor = ConsoleColor.Magenta; // narrative items in magenta
-
-            Console.WriteLine(@"
-            Welcome to the Fountain of Objects!
-            You are in a dark cavern system with many rooms.
-            Your goal is to find the Fountain of Objects and return to the entrance.
-            Be careful, there are dangers lurking in the darkness!
-            Good luck!
-            ");
-
-            Console.ResetColor();
-        }
-
-        public Board CreateBoard()
-        {
-            string? size = null;
-
-            Console.ForegroundColor = ConsoleColor.White; // descriptive text in white
-
-            Console.Write("Please select a board size: small, medium, or large: ");
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-
-            size = Console.ReadLine()?.ToLower();
-
-            Console.ResetColor();
-
-            if (String.IsNullOrWhiteSpace(size) || (size != "small" && size != "medium" && size != "large"))
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-
-                Console.WriteLine("Must enter a valid board size");
-
-                return CreateBoard();
-            }
-
-            Board board = new Board(size);
-
-            board.LoadBoard();
-
-            return board;
-        }
     }
 
     public class Board
@@ -112,10 +43,6 @@ namespace Simple_CSharp_Games.Models
     public int Columns { get; set; }
 
     public IRoom[,] Rooms { get; set; }
-
-    public bool IsFountainOn { get; set; } = false;
-
-    public bool QuestComplete { get; set; } = false;
 
     public Board(string size)
     {
@@ -161,35 +88,6 @@ namespace Simple_CSharp_Games.Models
 
     }
 
-    public void DisplayBoard(Player player)
-    {
-        Console.WriteLine($"\n{Size} Game Board\n");
-
-        for (int i = 0; i < Rows; i++)
-        {
-            for (int j = 0; j < Columns; j++)
-            {
-                var room = Rooms[i, j];
-                var isPlayerLocation = i == player.CurrentRow && j == player.CurrentColumn;
-
-                if (room != null && room == Rooms[0, 0])
-                {
-                    Console.Write($"{room.Type.ToString()[0]} ");
-                }
-                else if (isPlayerLocation)
-                {
-                    Console.Write("P ");
-                }
-                else
-                {
-                    Console.Write(". ");
-                }
-            }
-            Console.WriteLine();
-            Console.WriteLine(String.Concat(Enumerable.Repeat("--", Rows)));
-        }
-    }
-
     public bool IsAValidMove(int row, int column)
     {
         if (row < 0 || row >= Rows || column < 0 || column >= Columns)
@@ -200,152 +98,133 @@ namespace Simple_CSharp_Games.Models
         return true;
     }
 
-    public void InvalidMove(string direction)
+    public string InvalidMove(string direction)
     {
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine($"You can not move in that direction: {direction}");
+            return $"You can not move in that direction: {direction}";
     }
 
-    public void MovePlayer(Player player)
+    public (int newRow, int newCol, string message, bool isFountainOn, bool isPlayerAlive) MovePlayer(string input, int CurrentRow, int CurrentColumn, bool IsFountainOn, bool IsPlayerAlive)
     {
 
-        string? input = player.GetInput();
+        string result = string.Empty;
 
         if (input == "move north")
         {
-            if (IsAValidMove(player.CurrentRow - 1, player.CurrentColumn))
+            if (IsAValidMove(CurrentRow - 1, CurrentColumn))
             {
-                player.CurrentRow -= 1; // update player position
-                SenseRoom(player); // sense the room
-                return;
+                CurrentRow -= 1; // update player position
+                result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn); // sense the room
             }
 
-            InvalidMove(input);
-            MovePlayer(player);
-            return;
+            result = InvalidMove(input);
         }
         else if (input == "move south")
         {
-            if (IsAValidMove(player.CurrentRow + 1, player.CurrentColumn))
+            if (IsAValidMove(CurrentRow + 1, CurrentColumn))
             {
-                player.CurrentRow += 1;
-                SenseRoom(player);
-                return;
+                CurrentRow += 1;
+                result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
             }
 
-            InvalidMove(input);
-            MovePlayer(player);
+            result = InvalidMove(input);
         }
         else if (input == "move east")
         {
-            if (IsAValidMove(player.CurrentRow, player.CurrentColumn + 1))
+            if (IsAValidMove(CurrentRow, CurrentColumn + 1))
             {
-                player.CurrentColumn += 1;
-                SenseRoom(player);
-                return;
+                CurrentColumn += 1;
+                result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
             }
 
-            InvalidMove(input);
-            MovePlayer(player);
-            return;
+            result = InvalidMove(input);
         }
         else if (input == "move west")
         {
-            if (IsAValidMove(player.CurrentRow, player.CurrentColumn - 1))
+            if (IsAValidMove(CurrentRow, CurrentColumn - 1))
             {
-                player.CurrentColumn -= 1;
-                SenseRoom(player);
-                return;
+                CurrentColumn -= 1;
+                result = SenseRoom(CurrentRow, CurrentColumn, IsFountainOn);
             }
 
-            InvalidMove(input);
-            MovePlayer(player);
-            return;
+            result = InvalidMove(input);
+            
         }
         else if (input == "enable fountain")
         {
-            EnableFountain(player);
-            return;
+            (result, IsFountainOn) = EnableFountain(CurrentRow, CurrentColumn, IsFountainOn);
+            
         }
         else if (input == "disable fountain")
         {
-            DisableFountain(player);
-            return;
+             (result, IsFountainOn) = DisableFountain(CurrentRow, CurrentColumn, IsFountainOn);
         }
         else if (input == "quit")
         {
-            PlayerQuit(player);
+             (result, IsFountainOn) = PlayerQuit(IsPlayerAlive);
         }
+        return (CurrentRow, CurrentColumn, result, IsFountainOn, IsPlayerAlive );
     }
 
-    public void SenseRoom(Player player)
+    public string SenseRoom(int CurrentRow, int CurrentColumn, bool IsFountainOn)
     {
-        // Sense the room
-        Rooms[player.CurrentRow, player.CurrentColumn].Sense(IsFountainOn);
+        return Rooms[CurrentRow, CurrentColumn].Sense(IsFountainOn);
     }
 
-    public void EnableFountain(Player player)
+    public (string message, bool isFountainOn) EnableFountain(int CurrentRow, int CurrentColumn, bool IsFountainOn)
     {
 
-        var currentRoom = Rooms[player.CurrentRow, player.CurrentColumn];
+            string message = string.Empty;
+        var currentRoom = Rooms[CurrentRow, CurrentColumn];
 
 
         if (currentRoom is IActivatableRoom activatableRoom)
         {
             IsFountainOn = true;
-            activatableRoom.Enable();
-            return;
+            message = activatableRoom.Enable();
         }
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("You can not interact with the fountain because it is not in this room.");
-        Console.ResetColor();
-        return;
+            message = "You can not interact with the fountain because it is not in this room.";
+
+            return (message, IsFountainOn);
     }
 
-    public void DisableFountain(Player player)
+    public (string message, bool isFountainOn) DisableFountain(int CurrentRow, int CurrentColumn, bool IsFountainOn)
     {
-        var currentRoom = Rooms[player.CurrentRow, player.CurrentColumn];
+
+            string message = string.Empty;
+            var currentRoom = Rooms[CurrentRow, CurrentColumn];
 
         if (currentRoom is IActivatableRoom activatableRoom)
         {
             IsFountainOn = false;
-            activatableRoom.Disable();
-            return;
+            message = activatableRoom.Disable();
         }
 
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine("You can not interact with the fountain because it is not in this room.");
-        Console.ResetColor();
-        return;
+        message = "You can not interact with the fountain because it is not in this room.";
+        
+        return (message, IsFountainOn);
     }
 
-    public void PlayerWon(Player player)
+    public string  PlayerWon()
     {
-        Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("\nYou Win! Thanks For Playing!");
-        Console.ResetColor();
-        player.IsAlive = false; // end the game
-        return;
-
+        return "You Win! Thanks For Playing!";
     }
 
-    public void PlayerLost(Player player)
+    public (string message, bool isPlayerAlive) PlayerLost(bool IsPlayerAlive)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine("\nYou Lost! Game Over!");
-        Console.ResetColor();
-        player.IsAlive = false;
+            string message = string.Empty;
+            IsPlayerAlive = false;
+            message = "You Lost! Game Over!";
+            return (message, IsPlayerAlive);
     }
 
-    void PlayerQuit(Player player)
+    public (string message, bool isPlayerAlive) PlayerQuit(bool IsPlayerAlive)
     {
-        Console.ForegroundColor = ConsoleColor.Red; // text in red
-        Console.WriteLine("\nThanks for playing, Quitter!");
-        Console.ResetColor();
-        player.IsAlive = false;
-        return;
-    }
+            string message = string.Empty;
+            IsPlayerAlive = false;
+            message = "Thanks for playing, Quitter!";
+            return (message, IsPlayerAlive);
+        }
 
 }
 
@@ -362,12 +241,9 @@ namespace Simple_CSharp_Games.Models
             Column = column;
             Type = type;
         }
-        public void Sense(bool isFountainOn = false)
+        public string Sense(bool isFountainOn = false)
         {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("You sense nothing but the unnatural darkness, this room is empty!");
-            Console.ResetColor();
-            return;
+            return "You sense nothing but the unnatural darkness, this room is empty!";   
         }
     }
 
@@ -384,20 +260,14 @@ namespace Simple_CSharp_Games.Models
             Type = type;
         }
 
-        public void Sense(bool isFountainOn)
+        public string Sense(bool isFountainOn)
         {
             if (isFountainOn)
             {
-                Console.ForegroundColor = ConsoleColor.Yellow; // entrance text in yellow
-                Console.WriteLine("The Fountain of Objects has been reactivated, and you have escaped with your life!");
-                Console.ResetColor();
-                return;
+                return "The Fountain of Objects has been reactivated, and you have escaped with your life!";
             }
 
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("You see light coming from the cavern entrance.");
-            Console.ResetColor();
-            return;
+            return "You see light coming from the cavern entrance.";
         }
 
     }
@@ -415,96 +285,28 @@ namespace Simple_CSharp_Games.Models
             Type = type;
         }
 
-        public void Sense(bool isFountainOn)
+        public string Sense(bool isFountainOn)
         {
             if (isFountainOn)
             {
-                Console.ForegroundColor = ConsoleColor.Blue; // fountain text in blue
-                Console.WriteLine("You here rushing waters from the Fountain of Objects, it has been reactivated!");
-                Console.ResetColor();
-                return;
+                return "You here rushing waters from the Fountain of Objects, it has been reactivated!";
             }
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("You hear water dripping in this room. The fountain of Objects is here!");
-            Console.ResetColor();
-            return;
+            return "You hear water dripping in this room. The fountain of Objects is here!";
         }
 
-        public void Enable()
+        public string Enable()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("The Fountain of Objects has been reactivated!");
-            Console.ResetColor();
-            return;
+            return "The Fountain of Objects has been reactivated!";
         }
 
-        public void Disable()
+        public string Disable()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("The Fountain of Objects has been DeActivated!");
-            Console.ResetColor();
-            return;
+            return "The Fountain of Objects has been DeActivated!";
         }
     }
 
-    public class Player
-    {
-        public bool IsAlive { get; set; } = true;
-        public int CurrentRow { get; set; }
-        public int CurrentColumn { get; set; }
-
-        public string Location => $"(Row = {CurrentRow}, Column = {CurrentColumn})";
-
-        public string GetInput()
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            string prompt = "\nWhat do you want to do? ";
-
-            Console.Write(prompt);
-
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            string? userInput = Console.ReadLine()?.ToLower();
-            Console.ResetColor();
-
-            if (string.IsNullOrWhiteSpace(userInput) ||
-                userInput != "move north" &&
-                userInput != "move south" &&
-                userInput != "move east" &&
-                userInput != "move west" &&
-                userInput != "help" &&
-                userInput != "quit" &&
-                userInput != "enable fountain" &&
-                userInput != "disable fountain")
-            {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine("Must enter a valid input");
-                Console.ResetColor();
-                return GetInput();
-            }
-
-
-            if (userInput == "help")
-            {
-                ShowHelp();
-                return GetInput();
-            }
-
-            return userInput;
-        }
-
-        public void ShowHelp()
-        {
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine("These are the actions that you can take.");
-            Console.WriteLine("You can move through rooms: move north, move south, move east, move west.");
-            Console.WriteLine("You can interact with the Fountain Of Objects: enable fountain, disable fountain.");
-            Console.WriteLine("You can ask for help: help");
-            Console.WriteLine("You can quit the game: quit");
-            Console.ResetColor();
-            return;
-        }
-    }
+    // create class for new room: Pit
 
 }
 
@@ -514,11 +316,11 @@ public interface IRoom
     int Column { get; set; }
     string Location { get; }
     string Type { get; set; }
-    void Sense(bool isFountainOn = false);
+    string Sense(bool isFountainOn = false);
 }
 
 public interface IActivatableRoom : IRoom
 {
-    void Enable();
-    void Disable();
+    string Enable();
+    string Disable();
 }

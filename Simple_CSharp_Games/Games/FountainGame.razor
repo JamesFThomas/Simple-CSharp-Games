@@ -3,32 +3,87 @@
 
 <div class="fountain-game-container">
 	@* must gather board size as first step to start the game *@
+	@* Create new FountainGameState with size input and start the game *@
 	@if (fountainGameState == null)
 	{
 		<h3>@GameTitle</h3>
 		<label for="size-select">Choose board size:</label>
-        <select 
-			name="boardSize"
-			id="size-select"
-			@bind="SelectedBoardSize"
-			@bind:after="StartGame"
-        >
+		<select 
+		name="boardSize"
+		id="size-select"
+		@bind="SelectedBoardSize"
+		@bind:after="StartGame"
+		>
 			<option value="">--Please choose an option--</option>
 			<option value="small">small</option>
 			<option value="medium">medium</option>
 			<option value="large">large</option>
-        </select>
+		</select>
 
 	}
 	else
 	{
 		@* Show the board size input *@
 		<p>You have selected a board size of: <strong>@SelectedBoardSize</strong></p>
-		<p>The board zie is: <strong>@fountainGameState?.Board.Size</strong>  </p>
 
-		@* Create new FountainGameState with size input and start the game *@
 		@* Show where the player is on the board *@
+		<div class="fountain-gameBoard" style="width: 100%; max-width: 400px; margin: 0 auto;">
+			@for (int i = 0; i < fountainGameState?.Board.Rows; i++)
+			{
+				<div class="gameBoard-row" style="display: flex; flex-direction: row; width: 100%;">
+					@for (int j = 0; j < fountainGameState?.Board.Columns; j++)
+					{
+						var room = fountainGameState?.Board.Rooms[i, j];
+						var isPlayerLocation = i == fountainGameState?.CurrentRow && j == fountainGameState?.CurrentColumn;
+						string displayString;
+
+						if (room != null && room == fountainGameState?.Board.Rooms[0, 0])
+						{
+							displayString = $"{room.Type.ToString()[0]}";
+						}
+						else if (isPlayerLocation)
+						{
+							displayString = "P";
+						}
+						else
+						{
+							displayString = ".";
+						}
+
+						<span style="flex: 1; min-width: 32px; height: 32px; border: 1px solid #555; display: flex; align-items: center; justify-content: center; text-align: center;">
+							@displayString
+						</span>
+					}
+				</div>
+			}
+		</div>
+
 		@* Show an input to get the users action - move, sense, enable *@
+		<div class="ActionSelect-wrapper" style="">
+			<label for="action-select">Choose player action:</label>
+			<select 
+			name="playerActions"
+			id="action-select"
+			@bind="SelectedAction"
+			@bind:after="()=>PlayerAction(SelectedAction)">
+				<option value="">--Please choose an action--</option>
+				<option value="move north">move north</option>
+				<option value="move south">move south</option>
+				<option value="move east">move east</option>
+				<option value="move west">move west</option>
+				@* <option value="sense">sense room</option> *@
+				<option value="enable fountain">enable fountain</option>
+				<option value="disable fountain">disable fountain</option>
+			</select>
+		</div>
+
+		<p>The selected action is: <strong>@SelectedAction</strong>  </p>
+
+		<p>The action result was: <strong>@ActionResultMessage</strong>  </p>
+
+
+
+
 		@* When sense triggered show room sense return string *@
 	}
 </div>
@@ -38,11 +93,25 @@
 
 	private string SelectedBoardSize = "";
 
+	private string SelectedAction = "";
+
+	private string ActionResultMessage = "";
+
 	private FountainGameState? fountainGameState;
 
 	private void StartGame()
 	{
 		fountainGameState = new FountainGameState(SelectedBoardSize);
+	}
+
+	private void PlayerAction(string action)
+	{
+		SelectedAction = action;
+		if (fountainGameState != null)
+		{
+			ActionResultMessage = fountainGameState.MovePlayer(action);
+		}
+
 	}
 
 }
