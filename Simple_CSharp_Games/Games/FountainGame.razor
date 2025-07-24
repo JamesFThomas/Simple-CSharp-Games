@@ -1,18 +1,16 @@
 ﻿
 @using Simple_CSharp_Games.Models
 
-@inject IJSRuntime JS // Injecting JavaScript to use auto-focus functionality
+@inject IJSRuntime JS // Injecting JavaScript to use auto-focus on specific elements when rendered
 
 <div class="fountain-game-container">
-	@* must gather board size as first step to start the game *@
-	@* Create new FountainGameState with size input and start the game *@
 	@if (fountainGameState == null)
 	{
 		<div 
-			class="fountain-startScreen"
-			id="startScreen"
-			tabindex="0"
-			@onkeydown="StartScreenKeyHandler"
+		class="fountain-startScreen"
+		id="startScreen"
+		tabindex="0"
+		@onkeydown="StartScreenKeyHandler"
 		>
 			<p>Welcome to @GameTitle game!</p>
 			<p>In this game, you will navigate a board and interact with various rooms.</p>
@@ -25,17 +23,15 @@
 		</div>
 
 	}
-	else
+	@if(fountainGameState != null && fountainGameState.IsGameOver == false)
 	{
-		@* Show the board size input *@
 		<p>You have selected a board size of: <strong>@SelectedBoardSize</strong></p>
 
-		@* Show where the player is on the board *@
 		<div 
-			class="fountain-gameBoard" 
-			id="gameBoard"
-			style="width: 100%; max-width: 400px; margin: 0 auto;"
-			>
+		class="fountain-gameBoard" 
+		id="gameBoard"
+		style="width: 100%; max-width: 400px; margin: 0 auto;"
+		>
 			@for (int i = 0; i < fountainGameState?.Board.Rows; i++)
 			{
 				<div class="gameBoard-row" style="display: flex; flex-direction: row; width: 100%;">
@@ -66,13 +62,12 @@
 			}
 		</div>
 
-		@* Show an input to get the users action - move, sense, enable *@
 		<div 
-			class="gameControls-wrapper"
-			id="gameControls"
-			style=""
-			 tabindex="0"
-			 @onkeydown="GameBoardKeyHandler">
+		class="gameControls-wrapper"
+		id="gameControls"
+		style=""
+		tabindex="0"
+		@onkeydown="GameBoardKeyHandler">
 			<h4><strong>Game Controls</strong></h4>
 			<ol class="fountain-controls-list">
 				<li><strong>ArrowUp</strong> – Move north</li>
@@ -93,6 +88,19 @@
 
 
 		@* When sense triggered show room sense return string *@
+	}
+	@if (fountainGameState != null && fountainGameState.IsGameOver)
+	{
+		<p>Gamed Over: <strong>@ActionResultMessage</strong></p>
+
+		<button 
+		class="btn btn-primary" 
+		id="resetButton"
+		tabindex="0" 
+		@onclick="ResetGame"
+		>
+			Play Again
+		</button>
 	}
 </div>
 
@@ -120,9 +128,13 @@
 		{
 			componentId = "startScreen";
 		}
-		else
+		if (fountainGameState != null && !fountainGameState.IsGameOver)
 		{
 			componentId = "gameControls";
+		}
+		if (fountainGameState != null && fountainGameState.IsGameOver)
+		{
+			componentId = "resetButton";
 		}
 
 		// Console.WriteLine($"OnAfterRenderAsync: focusing {componentId}");
@@ -212,6 +224,14 @@
 			ActionResultMessage = fountainGameState.MovePlayer(action);
 		}
 
+	}
+
+	private void ResetGame()
+	{
+		fountainGameState = null;
+		SelectedBoardSize = "";
+		SelectedAction = "";
+		ActionResultMessage = "";
 	}
 
 }
