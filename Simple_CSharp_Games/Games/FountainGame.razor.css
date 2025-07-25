@@ -7,3 +7,10 @@
     color: white;
     font-size: 1.25rem;
 }
+
+.gameControls-wrapper:focus, 
+.fountain-startScreen:focus {
+    outline: 2px solid red;
+    outline-offset: 4px;
+    border-radius: 6px;
+}

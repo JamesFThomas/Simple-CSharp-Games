@@ -62,14 +62,16 @@
 			}
 		</div>
 
-		<div 
-		class="gameControls-wrapper"
-		id="gameControls"
-		style="margin-top: 20px;"
-		tabindex="0"
-		@onkeydown="GameBoardKeyHandler">
-			<h4><strong>Game Controls</strong></h4>
-			<ol class="fountain-controls-list">
+		<details class="gameControls-wrapper"
+				 id="gameControls"
+				 style="margin-top: 20px;"
+				 tabindex="0"
+				 @onkeydown="GameBoardKeyHandler"
+				 open>
+
+			<summary><strong>Game Controls</strong></summary>
+
+			<ul class="fountain-controls-list" style="margin-top: 0.5rem;">
 				<li><strong>ArrowUp</strong> – Move north</li>
 				<li><strong>ArrowDown</strong> – Move south</li>
 				<li><strong>ArrowLeft</strong> – Move west</li>
@@ -77,17 +79,23 @@
 				<li><strong>e</strong> – Enable fountain</li>
 				<li><strong>d</strong> – Disable fountain</li>
 				<li><strong>q</strong> – Quit game</li>
-			</ol>
-		</div>
+			</ul>
+		</details>
 
-		<p>Your last action was to: <strong>@SelectedAction</strong>  </p>
+		<details class="fountain-instructions"
+				 style="margin-top: 1rem;"
+				 open>
+			<summary><strong>Gameplay Instructions</strong></summary>
+			<ul style="margin-top: 0.5rem;">
+				<li>If the <strong>controls</strong> aren’t outlined in red, click them to enable keyboard input.</li>
+				<li>Use arrow keys to move; <strong>e</strong> enables the Fountain, <strong>d</strong> disables, <strong>q</strong> quits.</li>
+				<li>Always read the <strong>Room Sense</strong> text — it tells you what’s nearby.</li>
+				<li>A draft means a deadly Pit is adjacent — move with caution.</li>
+				<li>Entering a Pit ends the game immediately.</li>
+				<li>Enable the Fountain, then return to the Entrance to win.</li>
+			</ul>
+		</details>
 
-
-
-
-
-
-		@* When sense triggered show room sense return string *@
 	}
 	@if (fountainGameState != null && fountainGameState.IsGameOver)
 	{
