@@ -41,9 +41,9 @@
 						var isPlayerLocation = i == fountainGameState?.CurrentRow && j == fountainGameState?.CurrentColumn;
 						string displayString;
 
-						if (room != null && room == fountainGameState?.Board.Rooms[0, 0])
+						if (room != null && room == fountainGameState?.Board.Rooms[0,0])
 						{
-							displayString = $"{room.Type.ToString()[0]}";
+							displayString = $"{room.Type.ToString().Substring(0, 2)}";
 						}
 						else if (isPlayerLocation)
 						{

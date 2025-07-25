@@ -71,11 +71,17 @@ namespace Simple_CSharp_Games.Models
 
         public void LoadBoard()
         {
+
+            LoadBaseBoard(); // Load the base board with Entrance and Empty rooms
+            PlaceFountain(); // Randomly place the fountain in an empty room
+            PlacePits(); // Place pits based on the board size
+            MarkAdjacentRooms(); // Update rooms surrounding Pits to Adjacent type
+
+        }
+
+        public void LoadBaseBoard() // Entrance + Empty
+        {
             Rooms[0, 0] = new Entrance(0, 0, "Entrance");
-
-            Rooms[0, 2] = new Fountain(0, 2, "Fountain");
-
-            Rooms[0, 3] = new Pit(0, 3, "Pit");
 
             for (int i = 0; i < Rows; i++)
             {
@@ -87,7 +93,75 @@ namespace Simple_CSharp_Games.Models
                     }
                 }
             }
+        }
+        public void PlaceFountain() // Random open tile
+        {
+            Random random = new Random();
+            int row, column;
+            do
+            {
+                row = random.Next(0, Rows);
+                column = random.Next(0, Columns);
+            } while (Rooms[row, column].Type != "Empty");
+            Rooms[row, column] = new Fountain(row, column, "Fountain");
 
+        }       
+        public void PlacePits()  // One or more, safely placed
+        {
+            int numPits = Size switch
+            {
+                "Small" => 1,
+                "Medium" => 2,
+                "Large" => 3,
+                _ => 1
+            };
+
+            Random random = new Random();
+            int row, column;
+            for (int i = 0; i < numPits; i++)
+            {
+                do
+                {
+                    row = random.Next(0, Rows);
+                    column = random.Next(0, Columns);
+                } while (Rooms[row, column].Type != "Empty" || (row == 0 && column == 0)); // Ensure not placing in entrance or already occupied
+                Rooms[row, column] = new Pit(row, column, "Pit");
+            }
+
+        }
+        public void MarkAdjacentRooms() // scan the entire board and laod adjacent rooms next ti Pit rooms
+        {
+            for (int row = 0; row < Rows; row++)
+            {
+                for (int col = 0; col < Columns; col++)
+                {
+                    if (Rooms[row, col].Type == "Pit")
+                    {
+                        // Loop through all 8 surrounding tiles
+                        for (int rowOffset = -1; rowOffset <= 1; rowOffset++)
+                        {
+                            for (int colOffset = -1; colOffset <= 1; colOffset++)
+                            {
+                                if (rowOffset == 0 && colOffset == 0) continue; // Skip the Pit itself
+
+                                int adjacentRow = row + rowOffset;
+                                int adjacentCol = col + colOffset;
+
+                                if (IsOnBoard(adjacentRow, adjacentCol) &&
+                                    Rooms[adjacentRow, adjacentCol].Type == "Empty")
+                                {
+                                    Rooms[adjacentRow, adjacentCol] = new Adjacent(adjacentRow, adjacentCol, "Adjacent");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public bool IsOnBoard(int row, int col)  // ensures room is on board
+        {
+            return row >= 0 && row < Rows && col >= 0 && col < Columns;
         }
 
         public bool IsAValidMove(int row, int column)
