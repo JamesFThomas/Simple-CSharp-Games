@@ -25,8 +25,8 @@
 	}
 	@if(fountainGameState != null && fountainGameState.IsGameOver == false)
 	{
-		<p>You have selected a board size of: <strong>@SelectedBoardSize</strong></p>
 
+		<p>Room Sense: <strong>@ActionResultMessage</strong>  </p>
 		<div 
 		class="fountain-gameBoard" 
 		id="gameBoard"
@@ -65,7 +65,7 @@
 		<div 
 		class="gameControls-wrapper"
 		id="gameControls"
-		style=""
+		style="margin-top: 20px;"
 		tabindex="0"
 		@onkeydown="GameBoardKeyHandler">
 			<h4><strong>Game Controls</strong></h4>
@@ -80,9 +80,9 @@
 			</ol>
 		</div>
 
-		<p>The selected action is: <strong>@SelectedAction</strong>  </p>
+		<p>Your last action was to: <strong>@SelectedAction</strong>  </p>
 
-		<p>The action result was: <strong>@ActionResultMessage</strong>  </p>
+
 
 
 
@@ -113,6 +113,8 @@
 
 	private string ActionResultMessage = "";
 
+	private string componentToFocus = "startScreen";
+
 	private FountainGameState? fountainGameState;
 
 	// method to use imported interop function
@@ -123,22 +125,11 @@
 
 	protected override async Task OnAfterRenderAsync(bool firstRender)
 	{
-		string componentId = "";
-		if (firstRender && fountainGameState == null)
+		
+		if (!string.IsNullOrEmpty(componentToFocus))
 		{
-			componentId = "startScreen";
+			await FocusInputAsync(componentToFocus);
 		}
-		if (fountainGameState != null && !fountainGameState.IsGameOver)
-		{
-			componentId = "gameControls";
-		}
-		if (fountainGameState != null && fountainGameState.IsGameOver)
-		{
-			componentId = "resetButton";
-		}
-
-		// Console.WriteLine($"OnAfterRenderAsync: focusing {componentId}");
-		await FocusInputAsync(componentId);
 	}
 
 	//StartScreenKeyHandler and GameBoardKeyHandler
@@ -214,6 +205,7 @@
 	private void StartGame()
 	{
 		fountainGameState = new FountainGameState(SelectedBoardSize);
+		componentToFocus = "gameControls"; // Focus after game starts
 	}
 
 	private void PlayerAction(string action)
@@ -222,12 +214,17 @@
 		if (fountainGameState != null)
 		{
 			ActionResultMessage = fountainGameState.MovePlayer(action);
+			if (fountainGameState.IsGameOver)
+			{
+				componentToFocus = "resetButton"; // Focus the restart button
+			}
 		}
 
 	}
 
 	private void ResetGame()
 	{
+		componentToFocus = "startScreen"; // Focus back on size selector
 		fountainGameState = null;
 		SelectedBoardSize = "";
 		SelectedAction = "";
