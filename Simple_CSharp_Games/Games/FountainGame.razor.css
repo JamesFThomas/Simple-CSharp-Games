@@ -8,9 +8,51 @@
     font-size: 1.25rem;
 }
 
-.gameControls-wrapper:focus, 
+.fountain-gameControls:focus,
 .fountain-startScreen:focus {
     outline: 2px solid red;
     outline-offset: 4px;
     border-radius: 6px;
+}
+.fountain-gameLayout {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem;
+    width:fit-content;
+}
+
+.fountain-gameBoard {
+    width: fit-content;
+}
+
+.fountain-gameControls {
+    white-space: nowrap;
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.fountain-controlsList {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Stack vertically on narrower screens */
+@media (max-width: 950px) {
+    .fountain-gameLayout {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+kbd {
+    background-color: #222;
+    border: 1px solid #555;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.95rem;
+    font-family: monospace;
 }

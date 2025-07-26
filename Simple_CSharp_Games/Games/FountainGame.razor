@@ -27,67 +27,69 @@
 	{
 
 		<p>Room Sense: <strong>@ActionResultMessage</strong>  </p>
-		<div 
-		class="fountain-gameBoard" 
-		id="gameBoard"
-		style="width: 100%; max-width: 400px; margin: 0 auto;"
-		>
-			@for (int i = 0; i < fountainGameState?.Board.Rows; i++)
-			{
-				<div class="gameBoard-row" style="display: flex; flex-direction: row; width: 100%;">
-					@for (int j = 0; j < fountainGameState?.Board.Columns; j++)
-					{
-						var room = fountainGameState?.Board.Rooms[i, j];
-						var isPlayerLocation = i == fountainGameState?.CurrentRow && j == fountainGameState?.CurrentColumn;
-						string displayString;
+		<div class="fountain-gameLayout">
+			<div 
+			class="fountain-gameBoard" 
+			id="gameBoard"
+			style="width: 100%; max-width: 400px; margin: 0 auto;"
+			>
+				@for (int i = 0; i < fountainGameState?.Board.Rows; i++)
+				{
+					<div class="gameBoard-row" style="display: flex; flex-direction: row; width: 100%;">
+						@for (int j = 0; j < fountainGameState?.Board.Columns; j++)
+						{
+							var room = fountainGameState?.Board.Rooms[i, j];
+							var isPlayerLocation = i == fountainGameState?.CurrentRow && j == fountainGameState?.CurrentColumn;
+							string displayString;
 
-						if (room != null && room == fountainGameState?.Board.Rooms[0,0])
-						{
-							displayString = $"{room.Type.ToString().Substring(0, 2)}";
-						}
-						else if (isPlayerLocation)
-						{
-							displayString = "P";
-						}
-						else
-						{
-							displayString = ".";
-						}
+							if (room != null && room == fountainGameState?.Board.Rooms[0,0])
+							{
+								displayString = $"{room.Type.ToString().Substring(0, 2)}";
+							}
+							else if (isPlayerLocation)
+							{
+								displayString = "P";
+							}
+							else
+							{
+								displayString = ".";
+							}
 
-						<span style="flex: 1; min-width: 32px; height: 32px; border: 1px solid #555; display: flex; align-items: center; justify-content: center; text-align: center;">
-							@displayString
-						</span>
-					}
-				</div>
-			}
+							<span style="flex: 1; min-width: 32px; height: 32px; border: 1px solid #555; display: flex; align-items: center; justify-content: center; text-align: center;">
+								@displayString
+							</span>
+						}
+					</div>
+				}
+			</div>
+
+			<details class="fountain-gameControls"
+					 id="gameControls"
+					 tabindex="0"
+					 @onkeydown="GameBoardKeyHandler"
+					 open>
+
+				<summary><strong>Game Controls</strong></summary>
+
+				<ul class="fountain-controlsList" >
+					<li><kbd><i class="bi bi-arrow-up-short"></i></kbd> Move north</li>
+					<li><kbd><i class="bi bi-arrow-down-short"></i> </kbd> Move south</li>
+					<li><kbd><i class="bi bi-arrow-left-short"></i> </kbd> Move west</li>
+					<li><kbd><i class="bi bi-arrow-right-short"></i></kbd> Move east</li>
+					<li><kbd>e</kbd> Enable fountain</li>
+					<li><kbd>d</kbd> Disable fountain</li>
+					<li><kbd>q</kbd> Quit game</li>
+				</ul>
+			</details>
 		</div>
 
-		<details class="gameControls-wrapper"
-				 id="gameControls"
-				 style="margin-top: 20px;"
-				 tabindex="0"
-				 @onkeydown="GameBoardKeyHandler"
-				 open>
-
-			<summary><strong>Game Controls</strong></summary>
-
-			<ul class="fountain-controls-list" style="margin-top: 0.5rem;">
-				<li><strong>ArrowUp</strong> – Move north</li>
-				<li><strong>ArrowDown</strong> – Move south</li>
-				<li><strong>ArrowLeft</strong> – Move west</li>
-				<li><strong>ArrowRight</strong> – Move east</li>
-				<li><strong>e</strong> – Enable fountain</li>
-				<li><strong>d</strong> – Disable fountain</li>
-				<li><strong>q</strong> – Quit game</li>
-			</ul>
-		</details>
-
-		<details class="fountain-instructions"
-				 style="margin-top: 1rem;"
-				 open>
+		<details 
+			class="fountain-instructions"
+			 open
+		>
 			<summary><strong>Gameplay Instructions</strong></summary>
-			<ul style="margin-top: 0.5rem;">
-				<li>If the <strong>controls</strong> aren’t outlined in red, click them to enable keyboard input.</li>
+			<ul>
+				<li>If the <strong>controls</strong> aren’t outlined in red, click/tab to enable keyboard input.</li>
 				<li>Use arrow keys to move; <strong>e</strong> enables the Fountain, <strong>d</strong> disables, <strong>q</strong> quits.</li>
 				<li>Always read the <strong>Room Sense</strong> text — it tells you what’s nearby.</li>
 				<li>A draft means a deadly Pit is adjacent — move with caution.</li>
@@ -99,7 +101,7 @@
 	}
 	@if (fountainGameState != null && fountainGameState.IsGameOver)
 	{
-		<p>Gamed Over: <strong>@ActionResultMessage</strong></p>
+		<p>Game Over: <strong>@ActionResultMessage</strong></p>
 
 		<button 
 		class="btn btn-primary" 
