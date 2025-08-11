@@ -13,7 +13,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public TrueProgrammer(string name)
         {
             Name = name;
-            //AddBehavior("punch", new Punch());
+            AddBehavior("punch", new Punch());
         }
 
         public void AddBehavior(string behaviorName, IBehavior action)
@@ -49,9 +49,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public VinFletcher()
         {
-            //Name = 'Vin Fletcher';
-            // implement once actions are transfered over
-            //AddBehavior("quickshot", new QuickShot());
+            AddBehavior("quickshot", new QuickShot());
         }
 
         public void AddBehavior(string behaviorName, IBehavior action)
@@ -88,7 +86,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public Skeleton(string name)
         {
             Name = name;
-            //AddBehavior("bonecrunch", new BoneCrunch());
+            AddBehavior("bonecrunch", new BoneCrunch());
         }
 
         public void AddBehavior(string behaviorName, IBehavior action)
@@ -123,7 +121,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public UncodedOne(string name)
         {
             Name = name;
-            //AddBehavior("unravel", new Unravel());
+            AddBehavior("unravel", new Unravel());
         }
 
         public void AddBehavior(string behaviorName, IBehavior action)

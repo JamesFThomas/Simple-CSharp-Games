@@ -1,4 +1,6 @@
-﻿namespace Simple_CSharp_Games.Models.FinalBattle
+﻿using System.Linq;
+
+namespace Simple_CSharp_Games.Models.FinalBattle
 {
     public class Human : IPlayer
     {
@@ -57,15 +59,23 @@
 
         public void PickBehavior(ICharacter character, ICharacter? target)
         {
-            // implement when attacks are transferred over 
-            //foreach (var behaviorPair in character.Behaviors)
-            //{
-            //    if (behaviorPair.Value is StandardAttack)
-            //    {
-            //        character.PerformBehavior(behaviorPair.Key, target);
-            //        break;
-            //    }
-            //}
+            foreach (var pair in character.Behaviors)
+            {
+                if (pair.Value is StandardAttack)
+                {
+                    character.PerformBehavior(pair.Key, target);
+                    return; // choose attack immediately
+                }
+            }
+
+            // Fallback if no StandardAttack found
+            var firstKey = character.Behaviors.Keys.FirstOrDefault();
+            
+            if (firstKey is not null)
+            {
+                character.PerformBehavior(firstKey, target);
+            }
+
         }
     }
 }

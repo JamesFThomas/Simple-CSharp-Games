@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+﻿using System.Linq;
 
 namespace Simple_CSharp_Games.Models.FinalBattle
 {
@@ -83,7 +83,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine("The final battle has arrived.");
-            Console.WriteLine("On a volcanic island, enshrouded in a cloud of ash, you have reached the lair of the of the Uncoded One.");
+            Console.WriteLine("On a volcanic island, enshrouded in a cloud of ash, you have reached the lair of the Uncoded One.");
             Console.WriteLine("You have prepared for this fight and you will return Programming to the lands.");
             Console.WriteLine("Your allies have gathered to engage the Uncoded One's minions on the volcanic slopes while you and your party strike into the heart of the Uncoded One's lair to battle and destroy it.");
             Console.WriteLine("Only a True Programmer will be able to survive the encounter, defeat the Uncoded One, and escape!");
@@ -137,12 +137,12 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             ICharacter character = new Skeleton("Skelly");
             ICharacter character1 = new Skeleton("Skeletor");
             ICharacter character2 = new Skeleton("Skeletia");
-            ICharacter finalBoos = new UncodedOne("Boss Hog");
+            ICharacter finalBoss = new UncodedOne("Boss Hog");
 
             Monsters[0].Add(character);     // Battle 1
             Monsters[1].Add(character1);    // Battle 2
             Monsters[1].Add(character2);    // Battle 2
-            Monsters[2].Add(finalBoos);     // Battle 3
+            Monsters[2].Add(finalBoss);     // Battle 3
         }
 
         private void CheckCharacterHealth(ICharacter character, List<ICharacter> party)
@@ -164,15 +164,15 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public void HuzzahTheHeroesWon()
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nHeroes have lost! The Uncoded One's forces have prevailed.");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("\nHeroes have won! The Uncoded One has been defeated.");
             Console.ResetColor();
         }
 
         public void BooTheMonstersWon()
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nHeroes have won! The Uncoded One has been defeated.");
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine("\nHeroes have lost! The Uncoded One's forces have prevailed.");
             Console.ResetColor();
         }
 
@@ -184,18 +184,20 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
             if (!heroesAlive)
             {
-                HuzzahTheHeroesWon();
+                BooTheMonstersWon();
                 return;
             }
             else if (!monstersAlive)
             {
-                BooTheMonstersWon();
+                HuzzahTheHeroesWon();
                 return;
             }
         }
 
         public void HeroesTurns(IPlayer player, List<ICharacter> targets)
         {
+            if (targets.Count == 0) return;
+
             var currentTarget = targets[0];
 
             foreach (var hero in Heroes)
@@ -212,6 +214,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public void MonstersTurns(IPlayer player, int index)
         {
             var targets = Heroes;
+            
+            if (targets.Count == 0) return;
+            
             var currentTarget = targets[0];
 
             foreach (var monster in Monsters[index])
@@ -237,7 +242,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                     Console.ForegroundColor = ConsoleColor.Magenta;
                 }
 
-                Console.WriteLine($"{hero.Name} _______________ {hero.CurrentHP/hero.MaxHP}");
+                Console.WriteLine($"{hero.Name} _______________ {hero.CurrentHP}/{hero.MaxHP}");
 
                 Console.ResetColor();
             }
@@ -254,7 +259,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                     Console.ForegroundColor = ConsoleColor.Magenta;
                 }
 
-                Console.WriteLine($"                                                                                  {monster.Name} _____________ {monster.CurrentHP/monster.MaxHP }");
+                Console.WriteLine($"                                                                                  {monster.Name} _____________ {monster.CurrentHP}/{monster.MaxHP}");
 
                 Console.ResetColor();
             }
