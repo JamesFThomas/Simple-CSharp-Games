@@ -31,7 +31,6 @@ namespace Simple_CSharp_Games.Models
             return result;
         }
 
-        // check if the game is over
     }
 
     public class Board
@@ -444,7 +443,6 @@ namespace Simple_CSharp_Games.Models
         }
     }
 
-    // create class for new room: Pit
     public class Pit : IRoom
     {
         public int Row { get; set; }
