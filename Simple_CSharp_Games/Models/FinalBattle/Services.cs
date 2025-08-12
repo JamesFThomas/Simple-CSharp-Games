@@ -8,16 +8,74 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public List<ICharacter> Heroes { get; set; } = new List<ICharacter>();
         public List<List<ICharacter>> Monsters { get; set; } = new List<List<ICharacter>>();
 
+        public IPlayer Player1 { get; set; } = new Human("Player 1");
+
+        public IPlayer Player2 { get; set; } = new Computer("Computer");
+
+        public bool isOver { get; set; } = false;
+
+        public IPlayer? Winner { get; set; } = null;
+
         public Game()
         {
             Monsters = new List<List<ICharacter>>()
             {
-                new List<ICharacter>(),
-                new List<ICharacter>(),
-                new List<ICharacter>()
-        };
+                new List<ICharacter>(), // battle 1
+                new List<ICharacter>(), // battle 2
+                new List<ICharacter>()  // battle 3
+            };
         }
 
+        // ------------------ New methods for Blazor app  ------------------- //
+
+        public List<string> InitializeGame(string newHero)
+        {
+            List<string> initMessages = new List<string>();
+            isOver = false;
+            Winner = null;
+
+            ClearListBeforeAddingHeroes();
+            ClearListsBeforeAddingMonsters();
+
+            ICharacter hero = new TrueProgrammer(newHero);
+            ICharacter vin = new VinFletcher();
+
+            initMessages.Add($"Players created: player 1 => {Player1.GetType().Name}, player 2 => {Player2.GetType().Name}");
+
+            AddToHeroesParty(hero);
+            initMessages.Add($"{hero.Name} was added to the hero's party");
+
+            AddToHeroesParty(vin);
+            initMessages.Add($"{vin.Name} was added to the hero's party");
+
+            AddToMonstersParty();
+            initMessages.Add($"{Monsters.Count} waves of opponents were added to the monster's party");
+
+            return initMessages;
+
+        }
+
+        public void ClearListBeforeAddingHeroes()
+        {
+            Heroes.Clear();
+        }
+
+        public void ClearListsBeforeAddingMonsters()
+        {
+            foreach (List<ICharacter> innerList in Monsters)
+            {
+                innerList.Clear();
+            }
+        }
+
+        public void CommenceBattle()
+        {
+            Battle(Player1, Player2);
+        }
+
+
+
+        // ----------------------------------------------------------------- //
 
         public void Start()
         {

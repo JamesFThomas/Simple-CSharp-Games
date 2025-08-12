@@ -1,8 +1,33 @@
-﻿
+﻿@using Simple_CSharp_Games.Models.FinalBattle
+
 <div class="finalbattle-game-container">
 	<h3>@GameTitle</h3>
+
+	<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
+
+	<div class="messages-container">
+		@for (int i = 0; i < messageLog?.Count; i++)
+		{
+			var message = messageLog[i];
+			<p>@message</p>
+		}
+	</div>
+
 </div>
 
 @code {
 	private string GameTitle = "The Final Battle";
+
+	Game battleGame = new Game();
+
+	private string? heroName;
+
+	private List<string>? messageLog;
+
+	private void StartGame()
+	{
+		heroName = "Test";
+		if(heroName != null)
+		messageLog = battleGame.InitializeGame(heroName);			
+	}
 }
