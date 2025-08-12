@@ -26,9 +26,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             };
         }
 
-        // ------------------ New methods for Blazor app  ------------------- //
-
-        public List<string> InitializeGame(string newHero)
+        public List<string> InitializeGame(string newHero)  // working
         {
             List<string> initMessages = new List<string>();
             isOver = false;
@@ -55,6 +53,13 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         }
 
+        public List<string> CommenceBattle() // not tested yet
+        {
+            var battleMessages = Battle(Player1, Player2);
+
+            return battleMessages;
+        }
+
         public void ClearListBeforeAddingHeroes()
         {
             Heroes.Clear();
@@ -66,123 +71,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             {
                 innerList.Clear();
             }
-        }
-
-        public void CommenceBattle()
-        {
-            Battle(Player1, Player2);
-        }
-
-
-
-        // ----------------------------------------------------------------- //
-
-        public void Start()
-        {
-            GameExplanation();
-
-            var (player1, player2) = ChooseGameMode();
-
-            CreateHeroAndMonsterParties();
-
-            Battle(player1, player2);
-
-        }
-
-        private (IPlayer, IPlayer) ChooseGameMode()
-        {
-            IPlayer player1 = null!;
-            IPlayer player2 = null!;
-            string? gameMode;
-            int convertedInput;
-
-            string invalidEntryPrompt = "\nYour entry was NOT a valid game mode";
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nChoose what game play mode you want.");
-            Console.WriteLine("1 => Single player");
-            Console.WriteLine("2 => Double player versus");
-            Console.WriteLine("3 => I just want to watch!");
-            Console.ResetColor();
-
-            gameMode = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(gameMode) || !int.TryParse(gameMode, out convertedInput) || (convertedInput < 1 || convertedInput > 3))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(invalidEntryPrompt);
-                Console.ResetColor();
-                return ChooseGameMode();
-            }
-
-            switch (convertedInput)
-            {
-                case 1:
-                    player1 = new Human("Player 1");
-                    player2 = new Computer("Computer");
-                    break;
-                case 2:
-                    player1 = new Human("Player 1");
-                    player2 = new Human("Player 2");
-                    break;
-                case 3:
-                    player1 = new Computer("Player 1");
-                    player2 = new Computer("Computer");
-                    Console.ForegroundColor = ConsoleColor.DarkMagenta;
-                    Console.WriteLine("You like to watch it. It's cool man no judgement!");
-                    Console.ResetColor();
-                    break;
-            }
-
-            return (player1, player2);
-        }
-
-        public void GameExplanation()
-        {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("The final battle has arrived.");
-            Console.WriteLine("On a volcanic island, enshrouded in a cloud of ash, you have reached the lair of the Uncoded One.");
-            Console.WriteLine("You have prepared for this fight and you will return Programming to the lands.");
-            Console.WriteLine("Your allies have gathered to engage the Uncoded One's minions on the volcanic slopes while you and your party strike into the heart of the Uncoded One's lair to battle and destroy it.");
-            Console.WriteLine("Only a True Programmer will be able to survive the encounter, defeat the Uncoded One, and escape!");
-            Console.ResetColor();
-        }
-
-        public void CreateHeroAndMonsterParties()
-        {
-            string heroName = CollectHeroName();
-
-            TrueProgrammer hero = new TrueProgrammer(heroName);
-
-            VinFletcher vin = new VinFletcher();
-
-            AddToHeroesParty(hero);
-
-            AddToHeroesParty(vin);
-
-            AddToMonstersParty();
-
-        }
-
-        public string CollectHeroName()
-        {
-            string? input;
-            string namePrompt = "\nWhat shall be our hero's title? ";
-            string invalidInputPrompt = "Please enter a valid name for the hero";
-
-            Console.Write(namePrompt);
-            input = Console.ReadLine();
-
-            if (string.IsNullOrWhiteSpace(input))
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(invalidInputPrompt);
-                Console.ResetColor();
-                return CollectHeroName();
-            }
-
-            return input;
-
         }
 
         public void AddToHeroesParty(ICharacter character)
@@ -203,132 +91,141 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             Monsters[2].Add(finalBoss);     // Battle 3
         }
 
-        private void CheckCharacterHealth(ICharacter character, List<ICharacter> party)
+        public string WhosTurn(ICharacter character)
         {
+            return $"It's {character.Name}'s turn";
+             
+        }
+        
+        private string? CheckCharacterHealth(ICharacter character, List<ICharacter> party)
+        {
+            string? healthMessage = null;
+
             if (character.CurrentHP == 0)
             {
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine($"{character.Name} has been defeated!");
-                Console.ResetColor();
+                healthMessage = $"{character.Name} has been defeated!";
                 party.Remove(character);
             }
+
+            return healthMessage;
         }
 
-        public void WhosTurn(ICharacter character)
+        public string HuzzahTheHeroesWon()
         {
-            string prompt = $"\nIt's {character.Name}'s turn";
-            Console.WriteLine(prompt);
+            return "Heroes have won! The Uncoded One has been defeated.";
         }
 
-        public void HuzzahTheHeroesWon()
+        public string BooTheMonstersWon()
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nHeroes have won! The Uncoded One has been defeated.");
-            Console.ResetColor();
+            return "Heroes have lost! The Uncoded One's forces have prevailed.";
         }
 
-        public void BooTheMonstersWon()
+        private string? CheckBattleOutcome()
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nHeroes have lost! The Uncoded One's forces have prevailed.");
-            Console.ResetColor();
-        }
-
-        private void CheckBattleOutcome()
-        {
-
+            string? outCome = null;
             bool heroesAlive = Heroes.Any(character => character.CurrentHP > 0);
             bool monstersAlive = Monsters.Any(party => party.Any(character => character.CurrentHP > 0));
 
             if (!heroesAlive)
             {
-                BooTheMonstersWon();
-                return;
+                isOver = true;
+                Winner = Player2;
+                outCome = BooTheMonstersWon();
+                
             }
             else if (!monstersAlive)
             {
-                HuzzahTheHeroesWon();
-                return;
+                isOver = true;
+                Winner = Player1;
+                outCome = HuzzahTheHeroesWon();
             }
+
+            return outCome;
         }
 
-        public void HeroesTurns(IPlayer player, List<ICharacter> targets)
+        public List<string> HeroesTurns(IPlayer player, List<ICharacter> targets)
         {
-            if (targets.Count == 0) return;
+            List<string> turnMessages = new List<string>();
+
+            if (targets.Count == 0) return turnMessages;
 
             var currentTarget = targets[0];
 
             foreach (var hero in Heroes)
             {
-                DisplayBattleStatus(hero, Heroes, Monsters);
-                WhosTurn(hero);
+                if (hero.CurrentHP <= 0) continue;
+
+                var message = WhosTurn(hero);
+                
+                turnMessages.Add(message);
+                
                 player.PickBehavior(hero, currentTarget);
-                CheckCharacterHealth(currentTarget, targets);
-                Thread.Sleep(500);
+                
+                var healthMessage = CheckCharacterHealth(currentTarget, targets);
+
+                if (healthMessage != null)
+                {
+                    turnMessages.Add(healthMessage);
+
+                    // if current target was just removed, pick a new one
+                    if (!targets.Contains(currentTarget))
+                    {
+                        if (targets.Count == 0)
+                        {
+                            // wave cleared mid-turn — end early
+                            return turnMessages;
+                        }
+
+                        currentTarget = targets[0]; // retarget to the next alive enemy
+                    }
+                }
             }
+
+            return turnMessages;
         }
 
-
-        public void MonstersTurns(IPlayer player, int index)
+        public List<string> MonstersTurns(IPlayer player, int index)
         {
+            List<string> turnMessages = new List<string>();
+
             var targets = Heroes;
             
-            if (targets.Count == 0) return;
+            if (targets.Count == 0) return turnMessages;
             
             var currentTarget = targets[0];
 
             foreach (var monster in Monsters[index])
             {
-                DisplayBattleStatus(monster, targets, Monsters);
-                WhosTurn(monster);
+                if (monster.CurrentHP <= 0) continue;
+                
+                var message = WhosTurn(monster);
+                
+                turnMessages.Add(message);
+                
                 player.PickBehavior(monster, currentTarget);
-                CheckCharacterHealth(currentTarget, Heroes);
-                Thread.Sleep(500);
+
+                var healthMessage = CheckCharacterHealth(currentTarget, targets);
+                if (healthMessage != null)
+                {
+                    turnMessages.Add(healthMessage);
+                    if (!targets.Contains(currentTarget))
+                    {
+                        if (targets.Count == 0)
+                        {
+                            return turnMessages;
+                        }
+
+                        currentTarget = targets[0];
+                    }
+                }
             }
+
+            return turnMessages;
         }
 
-        public void DisplayBattleStatus(ICharacter currentCharacter, List<ICharacter> heroes, List<List<ICharacter>> monsters)
+        public List<string> Battle(IPlayer player1, IPlayer player2)
         {
-            var allMonsters = monsters.SelectMany(monsterParty => monsterParty);
-
-            Console.WriteLine("\n======================================================== BATTLE ========================================================\n");
-
-            foreach (var hero in heroes)
-            {
-                if (hero == currentCharacter)
-                {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                }
-
-                Console.WriteLine($"{hero.Name} _______________ {hero.CurrentHP}/{hero.MaxHP}");
-
-                Console.ResetColor();
-            }
-
-            Console.WriteLine("\n----------------------------------------------------------- VS --------------------------------------------------------\n");
-
-
-
-
-            foreach (var monster in allMonsters)
-            {
-                if (monster == currentCharacter)
-                {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                }
-
-                Console.WriteLine($"                                                                                  {monster.Name} _____________ {monster.CurrentHP}/{monster.MaxHP}");
-
-                Console.ResetColor();
-            }
-
-            Console.WriteLine("=========================================================================================================================");
-
-        }
-
-
-        public void Battle(IPlayer player1, IPlayer player2)
-        {
+            List<string> battleMessages = new List<string>();
 
             int currentIndex = 0;
 
@@ -336,25 +233,46 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             {
                 var currentMonsterParty = Monsters[currentIndex];
 
-                HeroesTurns(player1, currentMonsterParty);
+                var heroMessage = HeroesTurns(player1, currentMonsterParty);
+
+                battleMessages.AddRange(heroMessage);
+                
                 if (!currentMonsterParty.Any())
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"Monster party {currentIndex + 1} has been defeated!");
-                    Console.ResetColor();
-                    CheckBattleOutcome();
+                    battleMessages.Add($"Monster party {currentIndex + 1} has been defeated!");
+
+                    var outcomeMessage = CheckBattleOutcome();
+
+                    if (outcomeMessage != null) 
+                    {
+                        battleMessages.Add(outcomeMessage);
+                        break;
+                    } 
+
                     currentIndex++;
+                    
                     continue;
+
                 }
 
-                MonstersTurns(player2, currentIndex);
+                var monsterMessage = MonstersTurns(player2, currentIndex);
+
+                battleMessages.AddRange(monsterMessage);
+
                 if (!Heroes.Any())
                 {
-                    CheckBattleOutcome();
+                    var outcomeMessage = CheckBattleOutcome();
+
+                    if (outcomeMessage != null) battleMessages.Add(outcomeMessage);
+
                     break;
                 }
 
             }
+
+            return battleMessages;
         }
+
+
     }
 }

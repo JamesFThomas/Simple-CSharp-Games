@@ -5,10 +5,20 @@
 
 	<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
 
-	<div class="messages-container">
+	<button class="btn btn-primary" @onclick="StartBattle">Test Battle</button>
+
+	<div class="init-messages-container">
 		@for (int i = 0; i < messageLog?.Count; i++)
 		{
 			var message = messageLog[i];
+			<p>@message</p>
+		}
+	</div>
+
+	<div class="battle-messages-container">
+		@for (int i = 0; i < battleLog?.Count; i++)
+		{
+			var message = battleLog[i];
 			<p>@message</p>
 		}
 	</div>
@@ -24,10 +34,18 @@
 
 	private List<string>? messageLog;
 
+	private List<string>? battleLog;
+
+
 	private void StartGame()
 	{
 		heroName = "Test";
 		if(heroName != null)
-		messageLog = battleGame.InitializeGame(heroName);			
+			messageLog = battleGame.InitializeGame(heroName);			
+	}
+
+	private void StartBattle()
+	{
+		battleLog = battleGame.CommenceBattle();
 	}
 }
