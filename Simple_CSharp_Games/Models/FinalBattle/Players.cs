@@ -11,9 +11,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             Type = type;
         }
 
-        public void PickBehavior(ICharacter character, ICharacter? target)
+        public string PickBehavior(ICharacter character, ICharacter? target)
         {
-
+            string result; 
             string? userInput;
             int convertedInput = 0;
             string menuPrompt = $"\n{character.Name}'s behaviors:";
@@ -38,13 +38,15 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine(invalidInputPrompt);
                 Console.ResetColor();
-                PickBehavior(character, target);
-                return;
+                result = PickBehavior(character, target);
+                //return;
             }
 
             var behaviorKey = character.Behaviors.Keys.ElementAt(convertedInput);
 
-            character.PerformBehavior(behaviorKey, target);
+            result = character.PerformBehavior(behaviorKey, target);
+
+            return result;
         }
     }
 
@@ -57,25 +59,36 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             Type = type;
         }
 
-        public void PickBehavior(ICharacter character, ICharacter? target)
+        public string PickBehavior(ICharacter character, ICharacter? target)
         {
+            if (character?.Behaviors == null || character.Behaviors.Count == 0)
+            {
+                return $"{character?.Name ?? "Unknown"} has no behaviors to perform.";
+            }
+
+            string result = string.Empty;
+            
             foreach (var pair in character.Behaviors)
             {
                 if (pair.Value is StandardAttack)
                 {
-                    character.PerformBehavior(pair.Key, target);
-                    return; // choose attack immediately
+                    result = character.PerformBehavior(pair.Key, target);
+                    break;
                 }
             }
 
             // Fallback if no StandardAttack found
-            var firstKey = character.Behaviors.Keys.FirstOrDefault();
-            
-            if (firstKey is not null)
+            if (string.IsNullOrEmpty(result))
             {
-                character.PerformBehavior(firstKey, target);
+                var firstKey = character.Behaviors.Keys.FirstOrDefault();
+
+                if (firstKey is not null)
+                {
+                    result = character.PerformBehavior(firstKey, null);
+                }
             }
 
+            return result;
         }
     }
 }

@@ -8,9 +8,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public DoNothing() { }
 
-        public void Execute(ICharacter character, ICharacter? target, int? damage)
+        public string Execute(ICharacter character, ICharacter? target, int? damage)
         {
-            Console.WriteLine($"{character.Name} will {Name}");
+            return $"{character.Name} will {Name}.";
         }
 
     }
@@ -28,8 +28,10 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             Name = name;
             Damage = damage;
         }
-        public virtual void Execute(ICharacter attacker, ICharacter? target, int? damage)
+        public virtual string Execute(ICharacter attacker, ICharacter? target, int? damage)
         {
+            string? result = null;
+
             if (target != null)
             {
                 // calculate probability of success before adding damage
@@ -40,9 +42,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 if (hit)
                 {
                     // landed attack
-                    Console.WriteLine($"\n{attacker.Name} used {Name} on {target.Name}.");
-
-                    Console.WriteLine($"{Name} dealt {actualDamage} damage to {target.Name}.");
+                    result = $"{attacker.Name} used {Name} on {target.Name}, & dealt {actualDamage} damage ";
 
                     target.CurrentHP -= actualDamage;
 
@@ -54,18 +54,19 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 else
                 {
                     // missed attack
-                    Console.WriteLine($"{attacker.Name} MISSED {target.Name} with {Name} attack!");
-                    return;
+                    result = $"{attacker.Name} MISSED {target.Name} with {Name} attack!";
                 }
 
             }
             else
             {
-                Console.WriteLine("No target to attack.");
-                return;
+                result = "No target to attack.";
             }
 
-            Console.WriteLine($"{target.Name} health is now {target.CurrentHP}/{target.MaxHP}");
+            // because health will be displayed in UI I don't think I need this anymore.
+            //$"\n{target?.Name} health: {target?.CurrentHP}/{target?.MaxHP}."
+
+            return result;
         }
 
     }
@@ -78,11 +79,11 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
         }
 
-        public override void Execute(ICharacter attacker, ICharacter? target, int? damage)
+        public override string Execute(ICharacter attacker, ICharacter? target, int? damage)
         {
             int randomDamage = random.Next(2);
 
-            base.Execute(attacker, target, randomDamage);
+            return base.Execute(attacker, target, randomDamage);
 
         }
     }
@@ -107,12 +108,12 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public Unravel() : base(AttackName, 0) { }
 
-        public override void Execute(ICharacter attacker, ICharacter? target, int? damage)
+        public override string Execute(ICharacter attacker, ICharacter? target, int? damage)
         {
 
             int randomDamage = random.Next(3);
 
-            base.Execute(attacker, target, randomDamage);
+            return base.Execute(attacker, target, randomDamage);
         }
 
     }

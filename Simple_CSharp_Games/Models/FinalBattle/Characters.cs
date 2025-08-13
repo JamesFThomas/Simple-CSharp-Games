@@ -20,19 +20,21 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         { 
             Behaviors.Add(behaviorName, action);
         }
-        public void PerformBehavior(string behaviorName, ICharacter? target)
+        public string PerformBehavior(string behaviorName, ICharacter? target)
         {
+            string? result = null;
+            
             if (Behaviors.TryGetValue(behaviorName, out IBehavior? behavior))
             {
-                behavior.Execute(this, target, null);
+                result = behavior.Execute(this, target, null);
             }
 
-            // this should be a return string or at least a boolean for UI state update
-            // change later
             else
             {
-                Console.WriteLine($"{Name} has no actions named: {behaviorName}. Try another");
+               result = $"{Name} has no actions named: {behaviorName}. Try another!";
             }
+
+            return result;
         }
 
     }
@@ -56,19 +58,23 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
             Behaviors.Add(behaviorName, action);
         }
-        public void PerformBehavior(string behaviorName, ICharacter? target)
+        public string PerformBehavior(string behaviorName, ICharacter? target)
         {
+            string? result = null;
+
             if (Behaviors.TryGetValue(behaviorName, out IBehavior? behavior))
             {
-                behavior.Execute(this, target, null);
+                result = behavior.Execute(this, target, null);
             }
 
             // this should be a return string or at least a boolean for UI state update
             // change later
             else
             {
-                Console.WriteLine($"{Name} has no actions named: {behaviorName}. Try another");
+                result = $"{Name} has no actions named: {behaviorName}. Try another";
             }
+
+            return result;
         }
 
     }
@@ -93,19 +99,21 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
             Behaviors.Add(behaviorName, action);
         }
-        public void PerformBehavior(string behaviorName, ICharacter? target)
+        public string PerformBehavior(string behaviorName, ICharacter? target)
         {
+            string? result = null;
+
             if (Behaviors.TryGetValue(behaviorName, out IBehavior? behavior))
             {
-                behavior.Execute(this, target, null);
-            }
 
-            // this should be a return string or at least a boolean for UI state update
-            // change later
+                result = behavior.Execute(this, target, null);
+            }
             else
             {
-                Console.WriteLine($"{Name} has no actions named: {behaviorName}. Try another");
+                result = $"{Name} has no actions named: {behaviorName}. Try another";
             }
+
+            return result;
         }
 
 
@@ -128,19 +136,22 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
             Behaviors.Add(behaviorName, action);
         }
-        public void PerformBehavior(string behaviorName, ICharacter? target)
+        public string PerformBehavior(string behaviorName, ICharacter? target)
         {
+            string? result = null;
+
             if (Behaviors.TryGetValue(behaviorName, out IBehavior? behavior))
             {
-                behavior.Execute(this, target, null);
+
+                result = behavior.Execute(this, target, null);
             }
 
-            // this should be a return string or at least a boolean for UI state update
-            // change later
             else
             {
-                Console.WriteLine($"{Name} has no actions named: {behaviorName}. Try another");
+                result = $"{Name} has no actions named: {behaviorName}. Try another";
             }
+
+            return result;
         }
     }
 
