@@ -8,9 +8,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public List<ICharacter> Heroes { get; set; } = new List<ICharacter>();
         public List<List<ICharacter>> Monsters { get; set; } = new List<List<ICharacter>>();
 
-        public IPlayer Player1 { get; set; } = new Human("Player 1");
+        public IPlayer Player1 { get; set; } = new Computer("Cp1");
 
-        public IPlayer Player2 { get; set; } = new Computer("Computer");
+        public IPlayer Player2 { get; set; } = new Computer("Cp2");
 
         public bool isOver { get; set; } = false;
 
