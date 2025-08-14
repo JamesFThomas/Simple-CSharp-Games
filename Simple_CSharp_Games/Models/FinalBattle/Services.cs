@@ -101,7 +101,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         {
             string? healthMessage = null;
 
-            if (character.CurrentHP == 0)
+            if (character.CurrentHP <= 0)
             {
                 healthMessage = $"{character.Name} has been defeated!";
                 party.Remove(character);
@@ -149,7 +149,11 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
             if (targets.Count == 0) return turnMessages;
 
-            var currentTarget = targets[0];
+            // find first target that has CurrentHP > 0
+            //var currentTarget = targets[0];
+            var currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
+
+            if (currentTarget == null) return turnMessages;
 
             foreach (var hero in Heroes)
             {
@@ -159,8 +163,10 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 
                 turnMessages.Add(message);
                 
-                player.PickBehavior(hero, currentTarget);
-                
+                var playerMessage = player.PickBehavior(hero, currentTarget);
+
+                turnMessages.Add(playerMessage);
+
                 var healthMessage = CheckCharacterHealth(currentTarget, targets);
 
                 if (healthMessage != null)
@@ -176,7 +182,10 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                             return turnMessages;
                         }
 
-                        currentTarget = targets[0]; // retarget to the next alive enemy
+                        //currentTarget = targets[0]; // retarget to the next alive enemy
+                        currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
+
+                        if (currentTarget == null) return turnMessages;
                     }
                 }
             }
@@ -191,8 +200,11 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             var targets = Heroes;
             
             if (targets.Count == 0) return turnMessages;
-            
-            var currentTarget = targets[0];
+
+            //var currentTarget = targets[0];
+            var currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
+
+            if (currentTarget == null) return turnMessages;
 
             foreach (var monster in Monsters[index])
             {
@@ -202,12 +214,16 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 
                 turnMessages.Add(message);
                 
-                player.PickBehavior(monster, currentTarget);
+                var playerMessage = player.PickBehavior(monster, currentTarget);
+
+                turnMessages.Add(playerMessage);
 
                 var healthMessage = CheckCharacterHealth(currentTarget, targets);
+
                 if (healthMessage != null)
                 {
                     turnMessages.Add(healthMessage);
+                    
                     if (!targets.Contains(currentTarget))
                     {
                         if (targets.Count == 0)
@@ -215,7 +231,10 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                             return turnMessages;
                         }
 
-                        currentTarget = targets[0];
+                        //currentTarget = targets[0];
+                        currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
+
+                        if (currentTarget == null) return turnMessages;
                     }
                 }
             }
