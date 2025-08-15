@@ -4,7 +4,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 {
     public class DoNothing : IBehavior
     {
-        public string Name { get; set; } = "do nothing";
+        public string Name { get; set; } = "donothing";
 
         public DoNothing() { }
 
@@ -73,7 +73,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
     public class BoneCrunch : StandardAttack
     {
-        private const string AttackName = "bone crunch";
+        private const string AttackName = "bonecrunch";
 
         public BoneCrunch() : base(AttackName, 0)
         {
@@ -95,7 +95,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
     public class QuickShot : StandardAttack
     {
-        public QuickShot() : base("quick shot", 3)
+        public QuickShot() : base("quickshot", 3)
         {
         }
         protected override double HitChance => 0.5;

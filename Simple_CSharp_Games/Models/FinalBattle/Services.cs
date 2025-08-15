@@ -97,7 +97,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
              
         }
         
-        private string? CheckCharacterHealth(ICharacter character, List<ICharacter> party)
+        public string? CheckCharacterHealth(ICharacter character, List<ICharacter> party)
         {
             string? healthMessage = null;
 
@@ -149,8 +149,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
             if (targets.Count == 0) return turnMessages;
 
-            // find first target that has CurrentHP > 0
-            //var currentTarget = targets[0];
             var currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
 
             if (currentTarget == null) return turnMessages;

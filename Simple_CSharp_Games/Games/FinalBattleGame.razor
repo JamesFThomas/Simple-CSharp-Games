@@ -1,19 +1,23 @@
-﻿@using Simple_CSharp_Games.Models.FinalBattle
+﻿@using Simple_CSharp_Games.Models
+@using Simple_CSharp_Games.Models.FinalBattle
 
 <div class="finalbattle-game-container">
 	<h3>@GameTitle</h3>
 
-	<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
+	@if ( finalBattle.BattlePhase == BattlePhase.Setup )
+	{
+		<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
+	}
 
-	<button class="btn btn-primary" @onclick="StartBattle">Test Battle</button>
+	@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle._battleGame.Winner == null)
+	{
+		<button class="btn btn-primary" @onclick="HeroesTurn">Test Heroes</button>
+	}
 
-	<div class="init-messages-container">
-		@for (int i = 0; i < messageLog?.Count; i++)
-		{
-			var message = messageLog[i];
-			<p>@message</p>
-		}
-	</div>
+	@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle._battleGame.Winner == null)
+	{
+		<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
+	}
 
 	<div class="battle-messages-container">
 		@for (int i = 0; i < battleLog?.Count; i++)
@@ -30,6 +34,8 @@
 
 	Game battleGame = new Game();
 
+	BattleGameState finalBattle = new BattleGameState();
+
 	private string? heroName;
 
 	private List<string>? messageLog;
@@ -39,13 +45,21 @@
 
 	private void StartGame()
 	{
-		heroName = "Test";
-		if(heroName != null)
-			messageLog = battleGame.InitializeGame(heroName);			
+		heroName = "Game State Test";
+
+		if (heroName != null)
+			finalBattle.SetUp(heroName);
+
+		battleLog = finalBattle.BattleLog;
 	}
 
-	private void StartBattle()
+	private void HeroesTurn()
 	{
-		battleLog = battleGame.CommenceBattle();
+		finalBattle.ResolveHeroAction("punch", "0");
+	}
+
+	private void MonstersTurn()
+	{
+		finalBattle.ResolveMonsterTurn();
 	}
 }
