@@ -19,7 +19,14 @@
 		<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
 	}
 
+
+
 	<div class="battle-messages-container">
+		@if (finalBattle.BattlePhase != BattlePhase.Setup)
+		{	
+			<p> @finalBattle.CurrentTurnLabel </p>
+		}
+		
 		@for (int i = 0; i < battleLog?.Count; i++)
 		{
 			var message = battleLog[i];
@@ -53,10 +60,49 @@
 		battleLog = finalBattle.BattleLog;
 	}
 
+	// private void HeroesTurn()
+	// {
+	// 	finalBattle.ResolveHeroAction("punch", "0");
+	// }
+
 	private void HeroesTurn()
 	{
-		finalBattle.ResolveHeroAction("punch", "0");
+		// Get the current hero
+		var hero = finalBattle._battleGame.Heroes[finalBattle.ActiveHeroIndex];
+
+		// Pick the first available behavior for this hero
+		var actionId = hero.Behaviors?.Keys.FirstOrDefault();
+		
+		if (string.IsNullOrWhiteSpace(actionId))
+		{
+			battleLog?.Add($"{hero.Name} has no available actions.");
+			return;
+		}
+
+		// Find the first alive monster in the current wave
+		var monsters = finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex];
+		
+		var targetIndex = -1;
+		
+		for (int i = 0; i < monsters.Count; i++)
+		{
+			if (monsters[i].CurrentHP > 0)
+			{
+				targetIndex = i;
+				break;
+			}
+		}
+
+		if (targetIndex == -1)
+		{
+			battleLog?.Add("No valid monster targets remain in this wave.");
+			return;
+		}
+
+		// Execute the hero action against the chosen target
+		finalBattle.ResolveHeroAction(actionId, targetIndex.ToString());
 	}
+
 
 	private void MonstersTurn()
 	{

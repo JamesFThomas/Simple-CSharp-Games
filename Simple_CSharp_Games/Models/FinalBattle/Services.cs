@@ -199,7 +199,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             
             if (targets.Count == 0) return turnMessages;
 
-            //var currentTarget = targets[0];
             var currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
 
             if (currentTarget == null) return turnMessages;
@@ -208,9 +207,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
             {
                 if (monster.CurrentHP <= 0) continue;
                 
-                var message = WhosTurn(monster);
-                
-                turnMessages.Add(message);
+                // Not using in Blazor UI
+                //var message = WhosTurn(monster);
+                //turnMessages.Add(message);
                 
                 var playerMessage = player.PickBehavior(monster, currentTarget);
 
@@ -229,7 +228,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                             return turnMessages;
                         }
 
-                        //currentTarget = targets[0];
                         currentTarget = targets.FirstOrDefault(t => t.CurrentHP > 0);
 
                         if (currentTarget == null) return turnMessages;

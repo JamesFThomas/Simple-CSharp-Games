@@ -17,10 +17,16 @@ namespace Simple_CSharp_Games.Models
 
         public Game _battleGame { get; set; } = new Game();
 
+        private string? _currentTurnOverride; // null = auto mode
+
         public string CurrentTurnLabel
         {
             get
             {
+                // If an override is set, use it; otherwise compute from current state
+                if (!string.IsNullOrEmpty(_currentTurnOverride))
+                    return _currentTurnOverride;
+
                 return BattlePhase switch
                 {
                     BattlePhase.HeroAwaitInput or BattlePhase.HeroResolving
@@ -32,7 +38,13 @@ namespace Simple_CSharp_Games.Models
                     _ => string.Empty
                 };
             }
+            set
+            {
+                // Set a manual label, or clear to return to auto mode
+                _currentTurnOverride = string.IsNullOrWhiteSpace(value) ? null : value;
+            }
         }
+
         public BattleGameState() { }
 
         public void SetUp(string newHeroName)
@@ -44,6 +56,8 @@ namespace Simple_CSharp_Games.Models
             var initMessages = _battleGame.InitializeGame(newHeroName);
 
             BattlePhase = BattlePhase.HeroAwaitInput;
+
+            CurrentTurnLabel = string.Empty;
 
             BattleLog.AddRange(initMessages);
 
@@ -81,16 +95,23 @@ namespace Simple_CSharp_Games.Models
             }
 
             BattlePhase = BattlePhase.HeroAwaitInput;
+
+            CurrentTurnLabel = string.Empty;
         }
 
         public void ResolveHeroAction(string actionId, string targetId)
         {
-            // run one heroes turn
+            if (BattlePhase != BattlePhase.HeroAwaitInput || _battleGame.Winner != null)
+                return;
+
             BattlePhase = BattlePhase.HeroResolving;
 
+            CurrentTurnLabel = string.Empty;
 
-            if(!int.TryParse(targetId, out var targetIndex)) {
+            if (!int.TryParse(targetId, out var targetIndex))
+            {
                 BattlePhase = BattlePhase.HeroAwaitInput;
+                CurrentTurnLabel = string.Empty;
                 BattleLog.Add("Pick a valid target!");
                 return;
             }
@@ -100,60 +121,95 @@ namespace Simple_CSharp_Games.Models
             if (targetIndex < 0 || targetIndex >= targets.Count)
             {
                 BattlePhase = BattlePhase.HeroAwaitInput;
+                CurrentTurnLabel = string.Empty;
                 BattleLog.Add("Pick a valid target!");
                 return;
             }
 
             var target = targets[targetIndex];
 
-
-            if ( target.CurrentHP <= 0)
+            if (target.CurrentHP <= 0)
             {
                 BattlePhase = BattlePhase.HeroAwaitInput;
+                CurrentTurnLabel = string.Empty;
                 BattleLog.Add("Select a different target!");
                 return;
             }
 
+            // Perform the action
             var message = _battleGame.Heroes[ActiveHeroIndex].PerformBehavior(actionId, target);
-
             if (!string.IsNullOrWhiteSpace(message))
-            { 
                 BattleLog.Add(message);
-            }
 
-            string? healthMessage = null;
+            // Health + defeat messaging for the target
+            var healthMessage = _battleGame.CheckCharacterHealth(target, targets);
+            if (!string.IsNullOrWhiteSpace(healthMessage))
+                BattleLog.Add(healthMessage);
 
-            if (target != null)
-            {
-                healthMessage = _battleGame.CheckCharacterHealth(target, targets);
-            }
+            // Check if wave is cleared
+            bool waveAlive = targets.Any(m => m.CurrentHP > 0);
 
-            if (!string.IsNullOrWhiteSpace(healthMessage)) BattleLog.Add(healthMessage);
-
-            var waveAlive = targets.Any(m => m.CurrentHP > 0);
-            
             if (!waveAlive)
             {
                 BattleLog.Add($"Monster party {CurrentMonsterPartyIndex + 1} defeated!");
                 CurrentMonsterPartyIndex++;
-                var anyWavesLeft = CurrentMonsterPartyIndex < _battleGame.Monsters.Count;
-                BattlePhase = anyWavesLeft ? BattlePhase.HeroAwaitInput : BattlePhase.Outcome;
 
+                bool anyWavesLeft = CurrentMonsterPartyIndex < _battleGame.Monsters.Count;
+               
                 if (!anyWavesLeft)
-                    _battleGame.Winner = _battleGame.Player1;
+                {
+                    _battleGame.Winner = _battleGame.Player1;   // heroes win
+                    BattlePhase = BattlePhase.Outcome;
+                    CurrentTurnLabel = string.Empty;
+                    return;
+                }
 
+                // New wave: reset to first alive hero
+                for (int i = 0; i < _battleGame.Heroes.Count; i++)
+                {
+                    if (_battleGame.Heroes[i].CurrentHP > 0)
+                    {
+                        ActiveHeroIndex = i;
+                        break;
+                    }
+                }
+
+                CurrentTurnLabel = string.Empty;
+                BattlePhase = BattlePhase.HeroAwaitInput;
                 return;
             }
 
-            BattlePhase = BattlePhase.MonsterResolving;
+            // Otherwise rotate to next alive hero, or hand off to monsters
+            int nextIndex = -1;
+            for (int i = ActiveHeroIndex + 1; i < _battleGame.Heroes.Count; i++)
+            {
+                if (_battleGame.Heroes[i].CurrentHP > 0)
+                {
+                    nextIndex = i;
+                    break;
+                }
+            }
 
+            if (nextIndex != -1)
+            {
+                ActiveHeroIndex = nextIndex;
+                BattlePhase = BattlePhase.HeroAwaitInput;
+                CurrentTurnLabel = string.Empty;
+            }
+            else
+            {
+                BattlePhase = BattlePhase.MonsterResolving;
+                CurrentTurnLabel = string.Empty;
+            }
         }
 
         public void ResolveMonsterTurn()
         {
             BattlePhase = BattlePhase.MonsterResolving;
 
-            // Edge case: no monster waves means heroes auto‑win
+            CurrentTurnLabel = string.Empty;
+
+            // Edge case: no monster waves => heroes win
             if (_battleGame.Monsters == null || _battleGame.Monsters.Count == 0)
             {
                 _battleGame.Winner = _battleGame.Player1;
@@ -161,10 +217,9 @@ namespace Simple_CSharp_Games.Models
                 return;
             }
 
-            // Guard: valid wave index?
+            // Guard: valid wave index
             if (CurrentMonsterPartyIndex < 0 || CurrentMonsterPartyIndex >= _battleGame.Monsters.Count)
             {
-                // auto set up Heroes winning 
                 _battleGame.Winner ??= _battleGame.Player1;
                 BattlePhase = BattlePhase.Outcome;
                 return;
@@ -172,46 +227,70 @@ namespace Simple_CSharp_Games.Models
 
             // Run monsters’ turn for the current wave
             var messages = _battleGame.MonstersTurns(_battleGame.Player2, CurrentMonsterPartyIndex);
-
-            if (messages != null && messages.Count > 0)
+            if (messages is { Count: > 0 })
                 BattleLog.AddRange(messages);
 
-            // Check heroes
-            var heroesAlive = _battleGame.Heroes.Any(h => h.CurrentHP > 0);
+            // Check heroes alive
+            bool heroesAlive = _battleGame.Heroes.Any(h => h.CurrentHP > 0);
 
             if (!heroesAlive)
             {
-                _battleGame.Winner = _battleGame.Player2; // monsters win
-                BattlePhase = BattlePhase.Outcome; 
+                _battleGame.Winner = _battleGame.Player2;
+                BattlePhase = BattlePhase.Outcome;
+                CurrentTurnLabel = string.Empty;
                 return;
             }
 
-            // Check current wave
-            var waveAlive = _battleGame.Monsters[CurrentMonsterPartyIndex].Any(m => m.CurrentHP > 0);
+            // Check current wave alive
+            bool waveAlive = _battleGame.Monsters[CurrentMonsterPartyIndex].Any(m => m.CurrentHP > 0);
             
             if (!waveAlive)
             {
                 BattleLog.Add($"Monster party {CurrentMonsterPartyIndex + 1} defeated!");
-            
                 CurrentMonsterPartyIndex++;
 
-                var wavesLeft = CurrentMonsterPartyIndex < _battleGame.Monsters.Count;
-
+                bool wavesLeft = CurrentMonsterPartyIndex < _battleGame.Monsters.Count;
                 if (!wavesLeft)
                 {
-                    _battleGame.Winner = _battleGame.Player1; // Heroes win
+                    _battleGame.Winner = _battleGame.Player1;
                     BattlePhase = BattlePhase.Outcome;
+                    CurrentTurnLabel = string.Empty;
                     return;
                 }
+
+                // New wave: hand control to first alive hero and update label
+                for (int i = 0; i < _battleGame.Heroes.Count; i++)
+                {
+                    if (_battleGame.Heroes[i].CurrentHP > 0)
+                    {
+                        ActiveHeroIndex = i;
+                        break;
+                    }
+                }
                 
-                // back to Heroes 
+                //CurrentTurnLabel = $"{_battleGame.Heroes[ActiveHeroIndex].Name}'s turn";
+
                 BattlePhase = BattlePhase.HeroAwaitInput;
-                
+                CurrentTurnLabel = string.Empty;
+                return;
             }
 
-            // Otherwise, back to player input
+            // Wave still alive: back to heroes (first alive) and update label
+            for (int i = 0; i < _battleGame.Heroes.Count; i++)
+            {
+                if (_battleGame.Heroes[i].CurrentHP > 0)
+                {
+                    ActiveHeroIndex = i;
+                    break;
+                }
+            }
+            
+            //CurrentTurnLabel = $"{_battleGame.Heroes[ActiveHeroIndex].Name}'s turn";
+
+            CurrentTurnLabel = string.Empty;
             BattlePhase = BattlePhase.HeroAwaitInput;
         }
+
 
         public void AdvanceWaveOrOutcome()
         { }
