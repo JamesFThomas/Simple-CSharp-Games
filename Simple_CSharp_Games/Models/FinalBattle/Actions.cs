@@ -42,7 +42,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 if (hit)
                 {
                     // landed attack
-                    result = $"{attacker.Name} used {Name} on {target.Name}, & dealt {actualDamage} damage ";
+                    result = $"{attacker.Name} used {Name} on {target.Name}, dealing {actualDamage} damage ";
 
                     target.CurrentHP -= actualDamage;
 

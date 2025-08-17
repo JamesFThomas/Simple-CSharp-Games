@@ -2,85 +2,90 @@
 @using Simple_CSharp_Games.Models.FinalBattle
 
 <div class="finalbattle-game-container">
-	<h3>@GameTitle</h3>
 
 	@if ( finalBattle.BattlePhase == BattlePhase.Setup )
 	{
+		<h1>@GameTitle</h1>
 		// Add a input element to take user input for hero name
 		<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
 	}
 
-	@* Use buttons to move game flow forward*@
-	@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle._battleGame.Winner == null)
+	@if (finalBattle.BattlePhase != BattlePhase.Outcome && finalBattle._battleGame.Winner == null)
 	{
-		@* Add Choices display when Heroes  to take inputs *@
-		<button class="btn btn-primary" @onclick="HeroesTurn">Test Heroes</button>
-	}
 
-	@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle._battleGame.Winner == null)
-	{
-		<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
-	}
-
-	@* Add in a display for the winner situation *@
-
-	<div class="battle-parties-container">
-
-		<div class="battle-heroes-container">
-			@for (int i = 0; i < finalBattle._battleGame.Heroes.Count; i++)
+		<div class="battle-messages-container">
+			@if (finalBattle.BattlePhase != BattlePhase.Setup)
 			{
-				var hero = finalBattle._battleGame.Heroes[i];
-				<img 
+				<p> @finalBattle.CurrentTurnLabel </p>
+
+				<p>@finalBattle.LastLogEntry</p>
+			}
+
+		</div>
+
+		<div class="battle-parties-container">
+
+			<div class="battle-heroes-container">
+				@for (int i = 0; i < finalBattle._battleGame.Heroes.Count; i++)
+				{
+					var hero = finalBattle._battleGame.Heroes[i];
+					<img 
 					class="battle-avatar-image"
 					src="@($"{GetAvatarUrl(hero.Type)}")"
-					alt="Expeti's Game Intro" 
-				/>
-				<p>@hero.Name</p>
-			}
+					alt="@($"{hero.Name} Avatar Image")" 
+					/>
+					<p>@hero.Name</p>
+					<p>hp: @hero.CurrentHP/@hero.MaxHP</p>
+				}
+			</div>
+
+			<div class="battle-monsters-container">
+				@for (int i = 0; i < finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex].Count; i++)
+				{
+					var monster = finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex][i];
+					<img class="battle-avatar-image"
+					src="@($"{GetAvatarUrl(monster.Type)}")"
+					alt="@($"{monster.Name} Avatar Image")" />
+					<p>@monster.Name</p>
+					<p>hp: @monster.CurrentHP/@monster.MaxHP</p>
+				}
+			</div>
 		</div>
 
-		<div class="battle-monsters-container">
-			@for (int i = 0; i < finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex].Count; i++)
-			{
-				var monster = finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex][i];
-				<img class="battle-avatar-image"
-					 src="@($"{GetAvatarUrl(monster.Type)}")"
-				 	 alt="Expeti's Game Intro" 
-				/>
-				<p>@monster.Name</p>
-			}
-		</div>
-	</div>
-
-
-
-	<div class="battle-messages-container">
-		@* Update log to show the last entry so it's showing what battle action just occurred*@
-		@* Move log above avatars once showing last entry*@
-		@if (finalBattle.BattlePhase != BattlePhase.Setup)
-		{	
-			<p> @finalBattle.CurrentTurnLabel </p>
-		}
-		
-		@for (int i = 0; i < battleLog?.Count; i++)
+		@* Use buttons to move game flow forward*@
+		@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle._battleGame.Winner == null)
 		{
-			var message = battleLog[i];
-			<p>@message</p>
+			@* Add Choices display when Heroes  to take inputs *@
+			<button class="btn btn-primary" @onclick="HeroesTurn">Test Heroes</button>
 		}
-	</div>
+
+		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle._battleGame.Winner == null)
+		{
+			<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
+		}
+
+
+	}
+
+	@if (finalBattle.BattlePhase == BattlePhase.Outcome && finalBattle._battleGame.Winner != null)
+	{
+		<div class="battle-winner-container">
+			<p>Winner: @finalBattle._battleGame.Winner.Type</p>
+			<p>@finalBattle.LastLogEntry</p>
+
+			<button class="btn btn-primary" @onclick="PlayAgain">Play Again</button>
+
+		</div>
+	}
 
 </div>
 
 @code {
 	private string GameTitle = "The Final Battle";
 
-	Game battleGame = new Game();
-
 	BattleGameState finalBattle = new BattleGameState();
 
 	private string? heroName;
-
-	private List<string>? messageLog;
 
 	private List<string>? battleLog;
 
@@ -95,6 +100,21 @@
 		battleLog = finalBattle.BattleLog;
 	}
 
+	private void PlayAgain()
+	{
+		finalBattle = new BattleGameState();
+
+		finalBattle.BattlePhase = BattlePhase.Setup;
+		finalBattle.ActiveHeroIndex = 0;
+		finalBattle.CurrentMonsterPartyIndex = 0;
+
+		finalBattle.BattleLog.Clear();
+		finalBattle._battleGame.Winner = null;
+		finalBattle.CurrentTurnLabel = "";
+
+	}
+
+	// update to take choice arguments form user inputs
 	private void HeroesTurn()
 	{
 		// Get the current hero
@@ -103,7 +123,7 @@
 		// Pick the first available behavior for this hero
 		// actionId will be replaced by a UI value from user input later. 
 		var actionId = hero.Behaviors?.Keys.FirstOrDefault();
-		
+
 		if (string.IsNullOrWhiteSpace(actionId))
 		{
 			battleLog?.Add($"{hero.Name} has no available actions.");
@@ -112,9 +132,9 @@
 
 		// Find the first alive monster in the current wave
 		var monsters = finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex];
-		
+
 		var targetIndex = -1;
-		
+
 		for (int i = 0; i < monsters.Count; i++)
 		{
 			if (monsters[i].CurrentHP > 0)
@@ -134,7 +154,6 @@
 		finalBattle.ResolveHeroAction(actionId, targetIndex.ToString());
 	}
 
-
 	private void MonstersTurn()
 	{
 		finalBattle.ResolveMonsterTurn();
@@ -142,8 +161,6 @@
 
 	private string GetAvatarUrl( CharacterTypes characterType)
 	{
-		// Placeholder for hero image URL logic
-		// return "/images/expectis/expetis_intro.png";
 		return characterType switch
 		{
 			CharacterTypes.Hero => "/images/battle/hero_avatar.png",

@@ -13,11 +13,13 @@ namespace Simple_CSharp_Games.Models
 
         public List<string> BattleLog { get; set; } = new List<string>();
 
+        public string LastLogEntry => BattleLog.Count > 0 ? BattleLog[^1] : string.Empty;
+
         public BattlePhase BattlePhase { get; set; }
 
         public Game _battleGame { get; set; } = new Game();
 
-        private string? _currentTurnOverride; // null = auto mode
+        private string? _currentTurnOverride;
 
         public string CurrentTurnLabel
         {
@@ -66,6 +68,10 @@ namespace Simple_CSharp_Games.Models
 
         public List<KeyValuePair<string, IBehavior>> GetAvailableActions()
         {
+            if (_battleGame == null || _battleGame.Heroes == null) return new List<KeyValuePair<string, IBehavior>>();
+            
+            if (ActiveHeroIndex < 0 || ActiveHeroIndex >= _battleGame.Heroes.Count) return new List<KeyValuePair<string, IBehavior>>();
+
             var actions = _battleGame.Heroes[ActiveHeroIndex].Behaviors.ToList();
 
             return actions;
@@ -73,6 +79,10 @@ namespace Simple_CSharp_Games.Models
 
         public List<ICharacter> GetAvailableTargets()
         {
+            if (_battleGame == null || _battleGame.Monsters == null) return new List<ICharacter>();
+            
+            if (CurrentMonsterPartyIndex < 0 || CurrentMonsterPartyIndex >= _battleGame.Monsters.Count) return new List<ICharacter>();
+
             var targets = _battleGame.Monsters[CurrentMonsterPartyIndex].Where(target => target.CurrentHP > 0 ).ToList();
 
             return targets;
