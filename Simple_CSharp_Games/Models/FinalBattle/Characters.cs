@@ -9,6 +9,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public int MaxHP { get; set; } = 25;
 
         public int CurrentHP { get; set; } = 25;
+
+        public CharacterTypes Type { get; set; } = CharacterTypes.Hero;
+
         public Dictionary<string, IBehavior> Behaviors { get; set; } = new Dictionary<string, IBehavior>();
         public TrueProgrammer(string name)
         {
@@ -47,6 +50,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public int MaxHP { get; set; } = 15;
 
         public int CurrentHP { get; set; } = 15;
+
+        public CharacterTypes Type { get; set; } = CharacterTypes.Fletcher;
+
         public Dictionary<string, IBehavior> Behaviors { get; set; } = new Dictionary<string, IBehavior>();
 
         public VinFletcher()
@@ -67,8 +73,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 result = behavior.Execute(this, target, null);
             }
 
-            // this should be a return string or at least a boolean for UI state update
-            // change later
             else
             {
                 result = $"{Name} has no actions named: {behaviorName}. Try another";
@@ -87,6 +91,10 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public int MaxHP { get; set; } = 5;
 
         public int CurrentHP { get; set; } = 5;
+
+        public CharacterTypes Type { get; set; } = CharacterTypes.Skeleton;
+
+
         public Dictionary<string, IBehavior> Behaviors { get; set; } = new Dictionary<string, IBehavior>();
 
         public Skeleton(string name)
@@ -124,6 +132,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public string Name { get; set; }
         public int MaxHP { get; set; } = 15;
         public int CurrentHP { get; set; } = 15;
+        public CharacterTypes Type { get; set; } = CharacterTypes.Uncoded;
         public Dictionary<string, IBehavior> Behaviors { get; set; } = new Dictionary<string, IBehavior>();
 
         public UncodedOne(string name)
@@ -155,4 +164,12 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         }
     }
 
+}
+
+public enum CharacterTypes
+{
+    Hero,
+    Fletcher,
+    Skeleton,
+    Uncoded,
 }

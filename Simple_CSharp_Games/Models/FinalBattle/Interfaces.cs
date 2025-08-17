@@ -15,6 +15,8 @@
 
         int CurrentHP { get; set; }
 
+        CharacterTypes Type { get; set; }
+
         public Dictionary<string, IBehavior> Behaviors { get; set; }
 
         public void AddBehavior(string behaviorName, IBehavior action);

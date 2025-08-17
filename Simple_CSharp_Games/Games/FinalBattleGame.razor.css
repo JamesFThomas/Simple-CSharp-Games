@@ -3,7 +3,29 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 100vh;
     color: white;
     font-size: 1.25rem;
+
+    background-image: url('/images/battle/battle_background.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.battle-avatar-image {
+    height: 200px;
+    width: auto;
+    margin: .5rem;
+/*    border: 2px solid white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);*/
+}
+
+
+.battle-parties-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: .5rem;
 }

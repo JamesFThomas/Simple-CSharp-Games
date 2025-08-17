@@ -6,11 +6,14 @@
 
 	@if ( finalBattle.BattlePhase == BattlePhase.Setup )
 	{
+		// Add a input element to take user input for hero name
 		<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
 	}
 
+	@* Use buttons to move game flow forward*@
 	@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle._battleGame.Winner == null)
 	{
+		@* Add Choices display when Heroes  to take inputs *@
 		<button class="btn btn-primary" @onclick="HeroesTurn">Test Heroes</button>
 	}
 
@@ -19,9 +22,41 @@
 		<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
 	}
 
+	@* Add in a display for the winner situation *@
+
+	<div class="battle-parties-container">
+
+		<div class="battle-heroes-container">
+			@for (int i = 0; i < finalBattle._battleGame.Heroes.Count; i++)
+			{
+				var hero = finalBattle._battleGame.Heroes[i];
+				<img 
+					class="battle-avatar-image"
+					src="@($"{GetAvatarUrl(hero.Type)}")"
+					alt="Expeti's Game Intro" 
+				/>
+				<p>@hero.Name</p>
+			}
+		</div>
+
+		<div class="battle-monsters-container">
+			@for (int i = 0; i < finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex].Count; i++)
+			{
+				var monster = finalBattle._battleGame.Monsters[finalBattle.CurrentMonsterPartyIndex][i];
+				<img class="battle-avatar-image"
+					 src="@($"{GetAvatarUrl(monster.Type)}")"
+				 	 alt="Expeti's Game Intro" 
+				/>
+				<p>@monster.Name</p>
+			}
+		</div>
+	</div>
+
 
 
 	<div class="battle-messages-container">
+		@* Update log to show the last entry so it's showing what battle action just occurred*@
+		@* Move log above avatars once showing last entry*@
 		@if (finalBattle.BattlePhase != BattlePhase.Setup)
 		{	
 			<p> @finalBattle.CurrentTurnLabel </p>
@@ -60,17 +95,13 @@
 		battleLog = finalBattle.BattleLog;
 	}
 
-	// private void HeroesTurn()
-	// {
-	// 	finalBattle.ResolveHeroAction("punch", "0");
-	// }
-
 	private void HeroesTurn()
 	{
 		// Get the current hero
 		var hero = finalBattle._battleGame.Heroes[finalBattle.ActiveHeroIndex];
 
 		// Pick the first available behavior for this hero
+		// actionId will be replaced by a UI value from user input later. 
 		var actionId = hero.Behaviors?.Keys.FirstOrDefault();
 		
 		if (string.IsNullOrWhiteSpace(actionId))
@@ -107,5 +138,19 @@
 	private void MonstersTurn()
 	{
 		finalBattle.ResolveMonsterTurn();
+	}
+
+	private string GetAvatarUrl( CharacterTypes characterType)
+	{
+		// Placeholder for hero image URL logic
+		// return "/images/expectis/expetis_intro.png";
+		return characterType switch
+		{
+			CharacterTypes.Hero => "/images/battle/hero_avatar.png",
+			CharacterTypes.Fletcher => "/images/battle/fletcher_avatar.png",
+			CharacterTypes.Skeleton => "/images/battle/skeleton_avatar.png",
+			CharacterTypes.Uncoded => "/images/battle/uncoded_avatar.png",
+			_ => "/images/battle/fletcher_avatar.png"
+		};
 	}
 }
