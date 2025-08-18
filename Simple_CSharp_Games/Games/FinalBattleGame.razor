@@ -11,6 +11,7 @@
 			<label for="heroName">Enter Your Hero's Name:</label>
 			<input 
 			id="heroName"
+            tabindex="0"
 			type="text"
 			class="m-2 p-1"
 			min="0"
@@ -91,7 +92,12 @@
 				@bind-value:event="oninput"
 				@onkeydown="HeroActionHandler" />
 			</div>
-			<button class="btn btn-primary" @onclick="HeroesTurn">Perform Action</button>
+			<button disabled="@((actionChoiceIndex == null ))"
+				class="btn btn-primary" 
+				@onclick="HeroesTurn"
+			>
+				Perform Action
+			</button>
 		}
 
 		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle.GameWinner == null)
@@ -239,7 +245,7 @@
 	private async Task HeroActionHandler(KeyboardEventArgs e)
 	{
 
-		if (e.Key == "Enter")
+		if (e.Key == "Enter" && actionChoiceIndex != null)
 		{
 			HeroesTurn();
 			await Task.CompletedTask;
