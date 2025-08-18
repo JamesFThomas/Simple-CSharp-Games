@@ -6,11 +6,25 @@
 	@if ( finalBattle.BattlePhase == BattlePhase.Setup )
 	{
 		<h1>@GameTitle</h1>
-		// Add a input element to take user input for hero name
+
+		<div class="hero-input-container">
+			<label for="heroName">Enter Your Hero's Name:</label>
+			<input 
+			id="heroName"
+			type="text"
+			class="m-2 p-1"
+			min="0"
+			max="9"
+			@bind-value="heroName"
+			@bind-value:event="oninput"
+			@onkeydown="StartGameKeyHandler" 
+			/>
+		</div>
+
 		<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
 	}
 
-	@if (finalBattle.BattlePhase != BattlePhase.Outcome && finalBattle._battleGame.Winner == null)
+	@if (finalBattle.BattlePhase != BattlePhase.Outcome && finalBattle.GameWinner == null)
 	{
 
 		<div class="battle-messages-container">
@@ -52,14 +66,35 @@
 			</div>
 		</div>
 
-		@* Use buttons to move game flow forward*@
-		@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle._battleGame.Winner == null)
+		@if (finalBattle.BattlePhase == BattlePhase.HeroAwaitInput && finalBattle.GameWinner == null)
 		{
-			@* Add Choices display when Heroes  to take inputs *@
-			<button class="btn btn-primary" @onclick="HeroesTurn">Test Heroes</button>
+			var actionList1 = finalBattle.GetAvailableActions();
+			var max = actionList1?.Count - 1;
+			<div class="hero-actions-container">
+				@for (int i = 0; i < actionList1?.Count; i++)
+				{
+					var action = actionList1[i];
+					var index = i + 1; // Adjust index for display purposes
+					<p>@index - @action.Key</p>
+				}
+			</div>
+
+			// add an input tot set the correct index value for the action
+			<div class="hero-actionChoice-container">
+				<label for="actionChoice">Choose An Action:</label>
+				<input id="actionChoice"
+				type="number"
+				class="m-2 p-1"
+				min="1"
+				max="@max"
+				@bind-value="actionChoiceIndex"
+				@bind-value:event="oninput"
+				@onkeydown="HeroActionHandler" />
+			</div>
+			<button class="btn btn-primary" @onclick="HeroesTurn">Perform Action</button>
 		}
 
-		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle._battleGame.Winner == null)
+		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle.GameWinner == null)
 		{
 			<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
 		}
@@ -67,7 +102,7 @@
 
 	}
 
-	@if (finalBattle.BattlePhase == BattlePhase.Outcome && finalBattle._battleGame.Winner != null)
+	@if (finalBattle.BattlePhase == BattlePhase.Outcome && finalBattle.GameWinner != null)
 	{
 		<div class="battle-winner-container">
 			<p>Winner: @finalBattle._battleGame.Winner.Type</p>
@@ -87,22 +122,26 @@
 
 	private string? heroName;
 
+	private int? actionChoiceIndex;
+
 	private List<string>? battleLog;
+
+	private List<KeyValuePair<string, IBehavior>>? actionList;
 
 
 	private void StartGame()
 	{
-		heroName = "Game State Test";
-
 		if (heroName != null)
 			finalBattle.SetUp(heroName);
 
 		battleLog = finalBattle.BattleLog;
 	}
 
+
 	private void PlayAgain()
 	{
 		finalBattle = new BattleGameState();
+		heroName = null;
 
 		finalBattle.BattlePhase = BattlePhase.Setup;
 		finalBattle.ActiveHeroIndex = 0;
@@ -120,9 +159,24 @@
 		// Get the current hero
 		var hero = finalBattle._battleGame.Heroes[finalBattle.ActiveHeroIndex];
 
-		// Pick the first available behavior for this hero
-		// actionId will be replaced by a UI value from user input later. 
-		var actionId = hero.Behaviors?.Keys.FirstOrDefault();
+		var actions = finalBattle.GetAvailableActions();
+
+		// ensure hero has actions in list
+		if (actions == null || actions.Count == 0)
+		{
+			battleLog?.Add($"{hero.Name} has no available actions.");
+			return;
+		}
+
+		var index = (actionChoiceIndex ?? 0) - 1;
+
+		if (index < 0 || index >= actions.Count)
+		{
+			battleLog?.Add("Invalid action choice. Please select a valid option.");
+			return;
+		}
+
+		var actionId = actions[index].Key;
 
 		if (string.IsNullOrWhiteSpace(actionId))
 		{
@@ -152,6 +206,8 @@
 
 		// Execute the hero action against the chosen target
 		finalBattle.ResolveHeroAction(actionId, targetIndex.ToString());
+
+		actionChoiceIndex = null; // Reset the action choice index after the action is performed
 	}
 
 	private void MonstersTurn()
@@ -169,5 +225,24 @@
 			CharacterTypes.Uncoded => "/images/battle/uncoded_avatar.png",
 			_ => "/images/battle/fletcher_avatar.png"
 		};
+	}
+
+	private async Task StartGameKeyHandler(KeyboardEventArgs e)
+	{
+		if (e.Key == "Enter")
+		{
+			StartGame();
+			await Task.CompletedTask;
+		}
+	}
+
+	private async Task HeroActionHandler(KeyboardEventArgs e)
+	{
+
+		if (e.Key == "Enter")
+		{
+			HeroesTurn();
+			await Task.CompletedTask;
+		}
 	}
 }

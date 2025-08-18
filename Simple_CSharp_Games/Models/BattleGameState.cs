@@ -47,6 +47,8 @@ namespace Simple_CSharp_Games.Models
             }
         }
 
+        public IPlayer? GameWinner;
+
         public BattleGameState() { }
 
         public void SetUp(string newHeroName)
@@ -58,6 +60,8 @@ namespace Simple_CSharp_Games.Models
             var initMessages = _battleGame.InitializeGame(newHeroName);
 
             BattlePhase = BattlePhase.HeroAwaitInput;
+
+            GameWinner = _battleGame.Winner;
 
             CurrentTurnLabel = string.Empty;
 

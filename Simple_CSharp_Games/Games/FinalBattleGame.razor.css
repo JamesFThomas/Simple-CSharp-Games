@@ -34,3 +34,11 @@
     justify-content: center;
     align-items: center;
 }
+
+.hero-input-container,
+.hero-actionChoice-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
