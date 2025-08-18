@@ -31,8 +31,6 @@
 		<div class="battle-messages-container">
 			@if (finalBattle.BattlePhase != BattlePhase.Setup)
 			{
-				<p> @finalBattle.CurrentTurnLabel </p>
-
 				<p>@finalBattle.LastLogEntry</p>
 			}
 
@@ -71,38 +69,46 @@
 		{
 			var actionList1 = finalBattle.GetAvailableActions();
 			var max = actionList1?.Count - 1;
-			<div class="hero-actions-container">
-				@for (int i = 0; i < actionList1?.Count; i++)
-				{
-					var action = actionList1[i];
-					var index = i + 1; // Adjust index for display purposes
-					<p>@index - @action.Key</p>
-				}
-			</div>
 
-			// add an input tot set the correct index value for the action
-			<div class="hero-actionChoice-container">
-				<label for="actionChoice">Choose An Action:</label>
-				<input id="actionChoice"
-				type="number"
-				class="m-2 p-1"
-				min="1"
-				max="@max"
-				@bind-value="actionChoiceIndex"
-				@bind-value:event="oninput"
-				@onkeydown="HeroActionHandler" />
+
+			<div class="hero-controls-container">
+
+				<div class="hero-actions-container">
+					<p>Available Actions</p>
+					@for (int i = 0; i < actionList1?.Count; i++)
+					{
+						var action = actionList1[i];
+						var index = i + 1; // Adjust index for display purposes
+						<p>@index - @action.Key</p>
+					}
+				</div>
+
+				<div class="hero-actionChoice-container">
+					
+					<p> @finalBattle.CurrentTurnLabel </p>
+					<input id="actionChoiceInput"
+					type="number"
+					placeholder="Action"
+					min="1"
+					max="@max"
+					width="full"
+					@bind-value="actionChoiceIndex"
+					@bind-value:event="oninput"
+					@onkeydown="HeroActionHandler" />
+					<button disabled="@((actionChoiceIndex == null ))"
+						class="btn btn-primary" 
+						@onclick="HeroesTurn"
+					>
+						Perform Action
+					</button>
+				</div>
+
 			</div>
-			<button disabled="@((actionChoiceIndex == null ))"
-				class="btn btn-primary" 
-				@onclick="HeroesTurn"
-			>
-				Perform Action
-			</button>
 		}
 
 		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle.GameWinner == null)
 		{
-			<button tabindex="0" class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
+			<button tabindex="0" class="btn btn-primary" @onclick="MonstersTurn">Monsters Turn</button>
 		}
 
 
@@ -111,7 +117,7 @@
 	@if (finalBattle.BattlePhase == BattlePhase.Outcome && finalBattle.GameWinner != null)
 	{
 		<div class="battle-winner-container">
-			@* <p>Winner: @finalBattle?.GameWinner</p> *@
+
 			<p>@finalBattle?.LastLogEntry</p>
 
 			<button class="btn btn-primary" @onclick="PlayAgain">Play Again</button>

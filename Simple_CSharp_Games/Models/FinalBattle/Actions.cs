@@ -4,13 +4,13 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 {
     public class DoNothing : IBehavior
     {
-        public string Name { get; set; } = "donothing";
+        public string Name { get; set; } = "Do Nothing";
 
         public DoNothing() { }
 
         public string Execute(ICharacter character, ICharacter? target, int? damage)
         {
-            return $"{character.Name} will {Name}.";
+            return $"{character.Name} did nothing.";
         }
 
     }
@@ -42,7 +42,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 if (hit)
                 {
                     // landed attack
-                    result = $"{attacker.Name} used {Name} on {target.Name}, dealing {actualDamage} damage ";
+                    result = $"{attacker.Name} used {Name} on {target.Name} for {actualDamage} damage ";
 
                     target.CurrentHP -= actualDamage;
 
@@ -63,9 +63,6 @@ namespace Simple_CSharp_Games.Models.FinalBattle
                 result = "No target to attack.";
             }
 
-            // because health will be displayed in UI I don't think I need this anymore.
-            //$"\n{target?.Name} health: {target?.CurrentHP}/{target?.MaxHP}."
-
             return result;
         }
 
@@ -73,7 +70,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
     public class BoneCrunch : StandardAttack
     {
-        private const string AttackName = "bonecrunch";
+        private const string AttackName = "Bone Crunch";
 
         public BoneCrunch() : base(AttackName, 0)
         {
@@ -90,12 +87,12 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
     public class Punch : StandardAttack
     {
-        public Punch() : base("punch", 1) { }
+        public Punch() : base("Punch", 1) { }
     }
 
     public class QuickShot : StandardAttack
     {
-        public QuickShot() : base("quickshot", 3)
+        public QuickShot() : base("Quick Shot", 3)
         {
         }
         protected override double HitChance => 0.5;
@@ -104,7 +101,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
     public class Unravel : StandardAttack
     {
-        private const string AttackName = "unravel";
+        private const string AttackName = "Unravel";
 
         public Unravel() : base(AttackName, 0) { }
 

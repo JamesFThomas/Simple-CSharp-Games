@@ -289,7 +289,6 @@ namespace Simple_CSharp_Games.Models
                     }
                 }
                 
-                //CurrentTurnLabel = $"{_battleGame.Heroes[ActiveHeroIndex].Name}'s turn";
 
                 BattlePhase = BattlePhase.HeroAwaitInput;
                 CurrentTurnLabel = string.Empty;
@@ -306,12 +305,10 @@ namespace Simple_CSharp_Games.Models
                 }
             }
             
-            //CurrentTurnLabel = $"{_battleGame.Heroes[ActiveHeroIndex].Name}'s turn";
 
             CurrentTurnLabel = string.Empty;
             BattlePhase = BattlePhase.HeroAwaitInput;
         }
-
 
         public void AdvanceWaveOrOutcome()
         { }

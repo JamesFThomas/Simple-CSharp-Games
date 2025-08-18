@@ -28,6 +28,7 @@
 }
 
 .battle-winner-container,
+.hero-actionChoice-container,
 .battle-messages-container {
     display: flex;
     flex-direction: column;
@@ -35,10 +36,24 @@
     align-items: center;
 }
 
-.hero-input-container,
-.hero-actionChoice-container {
+.hero-input-container
+{
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+}
+
+.hero-controls-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+#actionChoiceInput {
+    width: 100px;
+    margin-bottom: .5rem;
+    padding: .5rem;
 }
