@@ -47,21 +47,21 @@ namespace Simple_CSharp_Games.Models
             }
         }
 
-        public IPlayer? GameWinner;
+        public IPlayer? GameWinner => _battleGame.Winner;
 
         public BattleGameState() { }
 
         public void SetUp(string newHeroName)
         {
             CurrentMonsterPartyIndex = 0;
+            
             BattleLog.Clear();
+            
             BattlePhase = BattlePhase.Setup;
 
             var initMessages = _battleGame.InitializeGame(newHeroName);
 
             BattlePhase = BattlePhase.HeroAwaitInput;
-
-            GameWinner = _battleGame.Winner;
 
             CurrentTurnLabel = string.Empty;
 
@@ -173,6 +173,9 @@ namespace Simple_CSharp_Games.Models
                 if (!anyWavesLeft)
                 {
                     _battleGame.Winner = _battleGame.Player1;   // heroes win
+                    
+                    BattleLog.Add(_battleGame.HuzzahTheHeroesWon());
+                    
                     BattlePhase = BattlePhase.Outcome;
                     CurrentTurnLabel = string.Empty;
                     return;
@@ -227,6 +230,7 @@ namespace Simple_CSharp_Games.Models
             if (_battleGame.Monsters == null || _battleGame.Monsters.Count == 0)
             {
                 _battleGame.Winner = _battleGame.Player1;
+                BattleLog.Add(_battleGame.HuzzahTheHeroesWon());
                 BattlePhase = BattlePhase.Outcome;
                 return;
             }
@@ -235,6 +239,7 @@ namespace Simple_CSharp_Games.Models
             if (CurrentMonsterPartyIndex < 0 || CurrentMonsterPartyIndex >= _battleGame.Monsters.Count)
             {
                 _battleGame.Winner ??= _battleGame.Player1;
+                BattleLog.Add(_battleGame.HuzzahTheHeroesWon());
                 BattlePhase = BattlePhase.Outcome;
                 return;
             }
@@ -250,6 +255,7 @@ namespace Simple_CSharp_Games.Models
             if (!heroesAlive)
             {
                 _battleGame.Winner = _battleGame.Player2;
+                BattleLog.Add(_battleGame.BooTheMonstersWon());
                 BattlePhase = BattlePhase.Outcome;
                 CurrentTurnLabel = string.Empty;
                 return;
@@ -267,6 +273,7 @@ namespace Simple_CSharp_Games.Models
                 if (!wavesLeft)
                 {
                     _battleGame.Winner = _battleGame.Player1;
+                    BattleLog.Add(_battleGame.HuzzahTheHeroesWon());
                     BattlePhase = BattlePhase.Outcome;
                     CurrentTurnLabel = string.Empty;
                     return;

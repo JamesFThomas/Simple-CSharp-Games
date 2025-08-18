@@ -6,9 +6,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
     {
         public string Name { get; set; }
 
-        public int MaxHP { get; set; } = 25;
+        public int MaxHP { get; set; } = 2;
 
-        public int CurrentHP { get; set; } = 25;
+        public int CurrentHP { get; set; } = 2;
 
         public CharacterTypes Type { get; set; } = CharacterTypes.Hero;
 
@@ -16,6 +16,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         public TrueProgrammer(string name)
         {
             Name = name;
+            AddBehavior("donothing", new DoNothing());
             AddBehavior("punch", new Punch());
         }
 
@@ -47,9 +48,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public string Name { get; set; } = "Vin Fletcher";
 
-        public int MaxHP { get; set; } = 15;
+        public int MaxHP { get; set; } = 2;
 
-        public int CurrentHP { get; set; } = 15;
+        public int CurrentHP { get; set; } = 2;
 
         public CharacterTypes Type { get; set; } = CharacterTypes.Fletcher;
 
@@ -57,6 +58,7 @@ namespace Simple_CSharp_Games.Models.FinalBattle
 
         public VinFletcher()
         {
+            AddBehavior("donothing", new DoNothing());
             AddBehavior("quickshot", new QuickShot());
         }
 
@@ -88,9 +90,9 @@ namespace Simple_CSharp_Games.Models.FinalBattle
         
         public string Name { get; set; }
 
-        public int MaxHP { get; set; } = 5;
+        public int MaxHP { get; set; } = 10;
 
-        public int CurrentHP { get; set; } = 5;
+        public int CurrentHP { get; set; } = 10;
 
         public CharacterTypes Type { get; set; } = CharacterTypes.Skeleton;
 
@@ -130,8 +132,8 @@ namespace Simple_CSharp_Games.Models.FinalBattle
     public class UncodedOne : ICharacter
     {
         public string Name { get; set; }
-        public int MaxHP { get; set; } = 15;
-        public int CurrentHP { get; set; } = 15;
+        public int MaxHP { get; set; } = 2;
+        public int CurrentHP { get; set; } = 2;
         public CharacterTypes Type { get; set; } = CharacterTypes.Uncoded;
         public Dictionary<string, IBehavior> Behaviors { get; set; } = new Dictionary<string, IBehavior>();
 

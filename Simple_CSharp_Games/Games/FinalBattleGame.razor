@@ -22,7 +22,7 @@
 			/>
 		</div>
 
-		<button class="btn btn-primary" @onclick="StartGame">Test Start</button>
+		<button class="btn btn-primary" @onclick="StartGame">Start Battle</button>
 	}
 
 	@if (finalBattle.BattlePhase != BattlePhase.Outcome && finalBattle.GameWinner == null)
@@ -102,7 +102,7 @@
 
 		@if (finalBattle.BattlePhase == BattlePhase.MonsterResolving && finalBattle.GameWinner == null)
 		{
-			<button class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
+			<button tabindex="0" class="btn btn-primary" @onclick="MonstersTurn">Test Monsters</button>
 		}
 
 
@@ -111,8 +111,8 @@
 	@if (finalBattle.BattlePhase == BattlePhase.Outcome && finalBattle.GameWinner != null)
 	{
 		<div class="battle-winner-container">
-			<p>Winner: @finalBattle._battleGame.Winner.Type</p>
-			<p>@finalBattle.LastLogEntry</p>
+			@* <p>Winner: @finalBattle?.GameWinner</p> *@
+			<p>@finalBattle?.LastLogEntry</p>
 
 			<button class="btn btn-primary" @onclick="PlayAgain">Play Again</button>
 
